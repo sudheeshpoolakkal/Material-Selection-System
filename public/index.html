@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Material Selection System</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+      color: #333;
+    }
+
+    /* Header */
+    header {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    header p {
+      margin: 0.5rem 0 0;
+      opacity: 0.8;
+    }
+
+    /* Main container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Search section */
+    .search-section {
+      background: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .search-section h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+
+    /* Filter controls */
+    .filter-group {
+      margin-bottom: 1rem;
+    }
+
+    .filter-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .filter-row input,
+    .filter-row select,
+    .filter-row input[type="range"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .filter-row input[type="range"] {
+      width: 100%;
+    }
+
+    .filter-row .unit {
+      margin-left: 0.5rem;
+      color: #666;
+      font-size: 0.8rem;
+    }
+
+    /* Property specific */
+    .cost-range .filter-row {
+      align-items: center;
+    }
+
+    .cost-range .filter-row input {
+      width: 60%;
+    }
+
+    .cost-range .filter-row .from,
+    .cost-range .filter-row .to {
+      width: 18%;
+      font-weight: bold;
+    }
+
+    /* Material grid */
+    .materials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .material-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .material-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .material-image {
+      width: 100%;
+      height: 180px;
+      background: #eaecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .material-info {
+      padding: 1rem;
+    }
+
+    .material-info h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      color: #2c3e50;
+    }
+
+    .material-info p {
+      margin: 0.2rem 0;
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .material-info .properties {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .material-info .properties span {
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    /* No results */
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .filter-row {
+        grid-template-columns: 1fr;
+      }
+      .cost-range .filter-row input {
+        width: 40%;
+      }
+      .cost-range .filter-row .from,
+      .cost-range .filter-row .to {
+        width: 30%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Material Selection System</h1>
+  <p>Search and filter materials by properties and application</p>
+</header>
+
+<div class="container">
+  <section class="search-section">
+    <h2>Search Materials</h2>
+
+    <div class="filter-group">
+      <label>Category</label>
+      <div class="filter-row">
+        <select id="categoryFilter">
+          <option value="">All Categories</option>
+          <option value="Metal">Metal</option>
+          <option value="Composite">Composite</option>
+          <option value="Polymer">Polymer</option>
+          <option value="Ceramic">Ceramic</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label>Application / Keyword</label>
+      <div class="filter-row">
+        <input type="text" id="keywordInput" placeholder="e.g. aerospace, high temperature, corrosion resistant...">
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label>Property Filters</label>
+      <div class="filter-row" id="propertyFilters">
+
+        <!-- Density -->
+        <div class="filter-row">
+          <label>Density (g/cm³)</label>
+          <input type="range" id="densityMin" min="1" max="25" step="0.1" value="1">
+          <span class="unit">min: <span id="densityMinVal">1.0</span></span>
+          <input type="range" id="densityMax" min="1" max="25" step="0.1" value="25">
+          <span class="unit">max: <span id="densityMaxVal">25.0</span></span>
+        </div>
+
+        <!-- Tensile Strength -->
+        <div class="filter-row">
+          <label>Tensile Strength (MPa)</label>
+          <input type="range" id="tensileMin" min="0" max="2000" step="10" value="0">
+          <span class="unit">min: <span id="tensileMinVal">0</span></span>
+          <input type="range" id="tensileMax" min="0" max="2000" step="10" value="2000">
+          <span class="unit">max: <span id="tensileMaxVal">2000</span></span>
+        </div>
+
+        <!-- Thermal Conductivity -->
+        <div class="filter-row">
+          <label>Thermal Conductivity (W/m·K)</label>
+          <input type="range" id="thermalMin" min="0" max="500" step="1" value="0">
+          <span class="unit">min: <span id="thermalMinVal">0</span></span>
+          <input type="range" id="thermalMax" min="0" max="500" step="1" value="500">
+          <span class="unit">max: <span id="thermalMaxVal">500</span></span>
+        </div>
+
+        <!-- Corrosion Resistance -->
+        <div class="filter-row">
+          <label>Corrosion Resistance</label>
+          <select id="corrosionSelect">
+            <option value="">All</option>
+            <option value="Excellent">Excellent</option>
+            <option value="Good">Good</option>
+            <option value="Poor">Poor</option>
+          </select>
+        </div>
+
+        <!-- Cost -->
+        <div class="filter-row cost-range">
+          <label>Cost</label>
+          <div class="filter-row">
+            <input type="text" id="costMin" placeholder="min">
+            <span class="from">→</span>
+            <input type="text" id="costMax" placeholder="max">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 1rem; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      Search Materials
+    </button>
+  </section>
+
+  <section class="materials-section">
+    <div class="materials-grid" id="materialsGrid">
+      <!-- Materials will be injected here -->
+    </div>
+  </section>
+</div>
+
+<script>
+  // Material data
+  let allMaterials = [];
+
+  // Render material cards
+  function renderMaterials(materials) {
+    const grid = document.getElementById('materialsGrid');
+    if (!materials || materials.length === 0) {
+      grid.innerHTML = '<div class="no-results">No materials found matching your criteria.</div>';
+      return;
+    }
+
+    grid.innerHTML = materials.map(material => {
+      const props = material.properties;
+      const category = material.category;
+      const name = material.name;
+      const desc = material.description || '';
+
+      // Format properties for display
+      const propsHTML = [];
+      if (props.density !== undefined && typeof props.density === 'number') {
+        propsHTML.push(`<span>Density: ${props.density} g/cm³</span>`);
+      }
+      if (props.tensileStrength !== undefined && typeof props.tensileStrength === 'number') {
+        propsHTML.push(`<span>Tensile: ${props.tensileStrength} MPa</span>`);
+      }
+      if (props.thermalConductivity !== undefined && typeof props.thermalConductivity === 'number') {
+        propsHTML.push(`<span>Thermal: ${props.thermalConductivity} W/m·K</span>`);
+      }
+      if (props.corrosionResistance) {
+        propsHTML.push(`<span>Corrosion: ${props.corrosionResistance}</span>`);
+      }
+      if (props.cost) {
+        propsHTML.push(`<span>Cost: ${props.cost}</span>`);
+      }
+
+      return `
+        <div class="material-card">
+          <div class="material-image">${category}</div>
+          <div class="material-info">
+            <h3>${name}</h3>
+            <p>${desc}</p>
+            <div class="properties">
+              ${propsHTML.join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Fetch materials from API
+  async function fetchMaterials(filters = {}) {
+    const params = new URLSearchParams();
+
+    if (filters.category) params.append('category', filters.category);
+    if (filters.minDensity !== undefined) params.append('minDensity', filters.minDensity);
+    if (filters.maxDensity !== undefined) params.append('maxDensity', filters.maxDensity);
+    if (filters.minTensileStrength !== undefined) params.append('minTensileStrength', filters.minTensileStrength);
+    if (filters.maxTensileStrength !== undefined) params.append('maxTensileStrength', filters.maxTensileStrength);
+    if (filters.minThermalConductivity !== undefined) params.append('minThermalConductivity', filters.minThermalConductivity);
+    if (filters.maxThermalConductivity !== undefined) params.append('maxThermalConductivity', filters.maxThermalConductivity);
+    if (filters.corrosionResistance) params.append('corrosionResistance', filters.corrosionResistance);
+    if (filters.keyword) params.append('keyword', filters.keyword);
+
+    try {
+      const res = await fetch(`/api/materials/search?${params.toString()}`);
+      const data = await res.json();
+      allMaterials = data.materials;
+      renderMaterials(allMaterials);
+    } catch (err) {
+      console.error('Error fetching materials:', err);
+      document.getElementById('materialsGrid').innerHTML = '<div class="no-results">Error loading materials. Check console.</div>';
+    }
+  }
+
+  // Event listeners
+  document.getElementById('categoryFilter').addEventListener('change', (e) => {
+    fetchMaterials({ category: e.target.value });
+  });
+
+  document.getElementById('keywordInput').addEventListener('input', (e) => {
+    fetchMaterials({ keyword: e.target.value });
+  });
+
+  // Density filters
+  const densityMinInput = document.getElementById('densityMin');
+  const densityMaxInput = document.getElementById('densityMax');
+  const densityMinVal = document.getElementById('densityMinVal');
+  const densityMaxVal = document.getElementById('densityMaxVal');
+
+  densityMinInput.addEventListener('input', () => {
+    densityMinVal.textContent = densityMinInput.value;
+  });
+  densityMaxInput.addEventListener('input', () => {
+    densityMaxVal.textContent = densityMaxInput.value;
+  });
+
+  // Tensile strength filters
+  const tensileMinInput = document.getElementById('tensileMin');
+  const tensileMaxInput = document.getElementById('tensileMax');
+  const tensileMinVal = document.getElementById('tensileMinVal');
+  const tensileMaxVal = document.getElementById('tensileMaxVal');
+
+  tensileMinInput.addEventListener('input', () => {
+    tensileMinVal.textContent = tensileMinInput.value;
+  });
+  tensileMaxInput.addEventListener('input', () => {
+    tensileMaxVal.textContent = tensileMaxInput.value;
+  });
+
+  // Thermal conductivity filters
+  const thermalMinInput = document.getElementById('thermalMin');
+  const thermalMaxInput = document.getElementById('thermalMax');
+  const thermalMinVal = document.getElementById('thermalMinVal');
+  const thermalMaxVal = document.getElementById('thermalMaxVal');
+
+  thermalMinInput.addEventListener('input', () => {
+    thermalMinVal.textContent = thermalMinInput.value;
+  });
+  thermalMaxInput.addEventListener('input', () => {
+    thermalMaxVal.textContent = thermalMaxInput.value;
+  });
+
+  // Corrosion resistance
+  const corrosionSelect = document.getElementById('corrosionSelect');
+  corrosionSelect.addEventListener('change', (e) => {
+    fetchMaterials({ corrosionResistance: e.target.value });
+  });
+
+  // Cost filters
+  const costMinInput = document.getElementById('costMin');
+  const costMaxInput = document.getElementById('costMax');
+
+  costMinInput.addEventListener('input', fetchMaterials);
+  costMaxInput.addEventListener('input', fetchMaterials);
+
+  // Search button
+  document.querySelector('.btn-primary').addEventListener('click', () => {
+    const filters = {
+      category: document.getElementById('categoryFilter').value,
+      keyword: document.getElementById('keywordInput').value,
+      minDensity: parseFloat(densityMinInput.value),
+      maxDensity: parseFloat(densityMaxInput.value),
+      minTensileStrength: parseInt(tensileMinInput.value),
+      maxTensileStrength: parseInt(tensileMaxInput.value),
+      minThermalConductivity: parseFloat(thermalMinInput.value),
+      maxThermalConductivity: parseFloat(thermalMaxInput.value),
+      corrosionResistance: corrosionSelect.value,
+      minCost: costMinInput.value,
+      maxCost: costMaxInput.value
+    };
+    fetchMaterials(filters);
+  });
+
+  // Initialize
+  fetchMaterials();
+</script>
+
+</body>
+</html>

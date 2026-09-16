@@ -1,0 +1,14 @@
+{
+  "name": "material-selection-system",
+  "version": "1.0.0",
+  "description": "Material Selection System with Node.js/Express backend and frontend search interface",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+
+}
