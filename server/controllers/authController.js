@@ -37,6 +37,7 @@ const login = async (req, res) => {
         if (isMatch) {
             res.json({
                 user_id: user.user_id,
+                name: user.name || '',
                 email: user.email,
                 role: user.role,
                 token: generateToken(user.user_id),
@@ -55,7 +56,7 @@ const login = async (req, res) => {
 // @access  Public
 const register = async (req, res) => {
     try {
-        const { email, password, role } = req.body;
+        const { name, email, password, role } = req.body;
 
         // --- Input validation ---
         if (!email || !password) {
@@ -66,6 +67,7 @@ const register = async (req, res) => {
         }
         const allowedRoles = ['admin', 'developer', 'viewer'];
         const userRole = allowedRoles.includes(role) ? role : 'viewer';
+        const userName = (name || '').trim();
 
         // Check if user exists
         const [existingUsers] = await db.execute('SELECT * FROM Users WHERE email = ?', [email]);
@@ -79,12 +81,13 @@ const register = async (req, res) => {
 
         // Insert user
         const [result] = await db.execute(
-            'INSERT INTO Users (email, password_hash, role) VALUES (?, ?, ?)',
-            [email, hashedPassword, userRole]
+            'INSERT INTO Users (name, email, password_hash, role) VALUES (?, ?, ?, ?)',
+            [userName, email, hashedPassword, userRole]
         );
 
         res.status(201).json({
             user_id: result.insertId,
+            name: userName,
             email,
             role: userRole,
             token: generateToken(result.insertId)
@@ -95,7 +98,113 @@ const register = async (req, res) => {
     }
 };
 
+// @desc    Get current user profile
+// @route   GET /api/auth/me
+// @access  Private
+const getMe = async (req, res) => {
+    try {
+        const [users] = await db.execute(
+            'SELECT user_id, name, email, role, created_at FROM Users WHERE user_id = ?',
+            [req.user.id]
+        );
+        if (users.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({ user: users[0] });
+    } catch (error) {
+        console.error('Get profile error:', error);
+        res.status(500).json({ message: 'Server error fetching user profile' });
+    }
+};
+
+// @desc    Update user profile (name, email)
+// @route   PUT /api/auth/profile
+// @access  Private
+const updateProfile = async (req, res) => {
+    try {
+        const { name, email } = req.body;
+        const userId = req.user.id;
+
+        if (!email || !email.trim()) {
+            return res.status(400).json({ message: 'Email address cannot be empty.' });
+        }
+
+        const trimmedEmail = email.trim().toLowerCase();
+        const trimmedName = (name || '').trim();
+
+        // Check if new email is already used by someone else
+        const [existing] = await db.execute(
+            'SELECT user_id FROM Users WHERE email = ? AND user_id != ?',
+            [trimmedEmail, userId]
+        );
+        if (existing.length > 0) {
+            return res.status(400).json({ message: 'That email is already registered to another account.' });
+        }
+
+        await db.execute(
+            'UPDATE Users SET name = ?, email = ? WHERE user_id = ?',
+            [trimmedName, trimmedEmail, userId]
+        );
+
+        const [updated] = await db.execute(
+            'SELECT user_id, name, email, role, created_at FROM Users WHERE user_id = ?',
+            [userId]
+        );
+
+        res.status(200).json({
+            message: 'Profile updated successfully',
+            user: updated[0]
+        });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).json({ message: 'Server error updating profile' });
+    }
+};
+
+// @desc    Change user password
+// @route   PUT /api/auth/change-password
+// @access  Private
+const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user.id;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ message: 'Current password and new password are required.' });
+        }
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({ message: 'New password must be at least 8 characters long.' });
+        }
+
+        // Fetch user's existing password hash
+        const [users] = await db.execute('SELECT password_hash FROM Users WHERE user_id = ?', [userId]);
+        if (users.length === 0) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, users[0].password_hash);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Incorrect current password.' });
+        }
+
+        // Hash new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        await db.execute('UPDATE Users SET password_hash = ? WHERE user_id = ?', [hashedPassword, userId]);
+
+        res.status(200).json({ message: 'Password changed successfully.' });
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({ message: 'Server error changing password' });
+    }
+};
+
 module.exports = {
     login,
-    register
+    register,
+    getMe,
+    updateProfile,
+    changePassword
 };

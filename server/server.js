@@ -7,7 +7,7 @@ require('dotenv').config();
 const db = require('./config/db');
 
 const authRoutes = require('./routes/authRoutes');
-// const projectRoutes = require('./routes/projectRoutes'); // To be implemented
+const projectRoutes = require('./routes/projectRoutes');
 
 const app = express();
 
@@ -17,7 +17,7 @@ app.use(express.json()); // Parses incoming JSON requests
 
 // Routes
 app.use('/api/auth', authRoutes);
-// app.use('/api/projects', projectRoutes);
+app.use('/api/projects', projectRoutes);
 
 // Basic health check endpoint
 app.get('/', (req, res) => {

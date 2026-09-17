@@ -1,25 +1,26 @@
-﻿// pages/Register.js
+// pages/Register.js
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 
-// Password strength checker
+// Password strength evaluator
 const getStrength = (pw) => {
-  if (!pw) return { label: '', color: '#ccc', width: '0%' };
+  if (!pw) return { label: '', score: 0, color: '#e0e0e0', width: '0%' };
   let score = 0;
-  if (pw.length >= 8)  score++;
+  if (pw.length >= 8) score++;
   if (/[A-Z]/.test(pw)) score++;
   if (/[0-9]/.test(pw)) score++;
   if (/[^A-Za-z0-9]/.test(pw)) score++;
-  const map = [
-    { label: 'Too short', color: '#e53935', width: '15%' },
-    { label: 'Weak',      color: '#e53935', width: '25%' },
-    { label: 'Fair',      color: '#fb8c00', width: '55%' },
-    { label: 'Good',      color: '#43a047', width: '75%' },
-    { label: 'Strong',    color: '#1b5e20', width: '100%' },
+
+  const levels = [
+    { label: 'Too short', color: '#e53935', width: '20%' },
+    { label: 'Weak', color: '#f4511e', width: '40%' },
+    { label: 'Fair', color: '#fb8c00', width: '65%' },
+    { label: 'Good', color: '#43a047', width: '85%' },
+    { label: 'Strong', color: '#2e7d32', width: '100%' },
   ];
-  return map[score] || map[0];
+  return { ...levels[score], score };
 };
 
 const styles = {
@@ -28,84 +29,159 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: '#f0f2f5',
+    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
     padding: '2rem 1rem',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   },
   card: {
-    background: '#fff',
-    padding: '2.5rem 2rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+    background: '#ffffff',
+    padding: '2.5rem 2.2rem',
+    borderRadius: '16px',
+    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
     width: '100%',
-    maxWidth: '420px',
+    maxWidth: '460px',
   },
-  appTitle: { marginBottom: '0.25rem', textAlign: 'center', color: '#1a73e8', fontSize: '1.3rem', fontWeight: '700' },
-  subtitle: { textAlign: 'center', color: '#777', marginBottom: '1.8rem', fontWeight: 'normal', fontSize: '1rem' },
-  label: { display: 'block', marginBottom: '0.3rem', fontWeight: '600', color: '#555', fontSize: '0.9rem' },
+  header: {
+    textAlign: 'center',
+    marginBottom: '1.8rem',
+  },
+  logoBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '54px',
+    height: '54px',
+    borderRadius: '14px',
+    background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)',
+    color: '#fff',
+    fontSize: '1.6rem',
+    marginBottom: '0.75rem',
+    boxShadow: '0 4px 12px rgba(26, 115, 232, 0.3)',
+  },
+  appTitle: {
+    margin: '0 0 0.35rem',
+    color: '#1a202c',
+    fontSize: '1.5rem',
+    fontWeight: '700',
+  },
+  subtitle: {
+    margin: 0,
+    color: '#718096',
+    fontSize: '0.95rem',
+  },
+  formGroup: {
+    marginBottom: '1.2rem',
+  },
+  label: {
+    display: 'block',
+    marginBottom: '0.4rem',
+    fontWeight: '600',
+    color: '#374151',
+    fontSize: '0.88rem',
+  },
   input: {
     width: '100%',
-    padding: '0.6rem 0.8rem',
-    marginBottom: '0.25rem',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    fontSize: '1rem',
+    padding: '0.75rem 1rem',
+    border: '1.5px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '0.95rem',
     boxSizing: 'border-box',
     outline: 'none',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
   },
-  inputError: { border: '1px solid #e53935' },
   select: {
     width: '100%',
-    padding: '0.6rem 0.8rem',
-    marginBottom: '1rem',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    fontSize: '1rem',
+    padding: '0.75rem 1rem',
+    border: '1.5px solid #e2e8f0',
+    borderRadius: '8px',
+    fontSize: '0.95rem',
     boxSizing: 'border-box',
-    background: '#fff',
+    background: '#ffffff',
     cursor: 'pointer',
+    outline: 'none',
   },
-  fieldError: { color: '#e53935', fontSize: '0.8rem', marginBottom: '0.75rem', display: 'block' },
-  strengthBar: {
-    height: '4px',
-    background: '#eee',
-    borderRadius: '2px',
-    marginBottom: '0.3rem',
+  inputError: {
+    borderColor: '#e53935',
+  },
+  errorText: {
+    color: '#e53935',
+    fontSize: '0.8rem',
+    marginTop: '0.3rem',
+    display: 'block',
+  },
+  strengthContainer: {
+    marginTop: '0.5rem',
+  },
+  strengthTrack: {
+    height: '5px',
+    background: '#edf2f7',
+    borderRadius: '3px',
     overflow: 'hidden',
   },
-  strengthLabel: { fontSize: '0.78rem', marginBottom: '0.75rem', display: 'block' },
+  strengthFill: {
+    height: '100%',
+    transition: 'width 0.3s ease, background-color 0.3s ease',
+  },
+  strengthLabel: {
+    fontSize: '0.78rem',
+    marginTop: '0.25rem',
+    display: 'block',
+    fontWeight: '600',
+  },
+  roleDescription: {
+    fontSize: '0.78rem',
+    color: '#718096',
+    marginTop: '0.35rem',
+    display: 'block',
+  },
   button: {
     width: '100%',
-    padding: '0.75rem',
-    background: '#1a73e8',
-    color: '#fff',
+    padding: '0.85rem',
+    background: 'linear-gradient(135deg, #1a73e8 0%, #1557b0 100%)',
+    color: '#ffffff',
     border: 'none',
-    borderRadius: '4px',
+    borderRadius: '8px',
     fontSize: '1rem',
     fontWeight: '600',
     cursor: 'pointer',
-    marginTop: '0.5rem',
+    marginTop: '1rem',
+    boxShadow: '0 4px 12px rgba(26, 115, 232, 0.25)',
+    transition: 'transform 0.1s ease',
   },
-  buttonDisabled: { background: '#a0b9e4', cursor: 'not-allowed' },
-  apiError: {
-    background: '#fdecea',
-    color: '#c0392b',
-    padding: '0.6rem 0.8rem',
-    borderRadius: '4px',
-    marginBottom: '1rem',
-    fontSize: '0.9rem',
-    border: '1px solid #f5c6cb',
+  buttonDisabled: {
+    background: '#93c5fd',
+    cursor: 'not-allowed',
+    boxShadow: 'none',
   },
-  roleHint: { fontSize: '0.78rem', color: '#999', marginBottom: '1rem', display: 'block' },
-  footer: { textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: '#777' },
-  link: { color: '#1a73e8', fontWeight: '600', textDecoration: 'none' },
-  hashNote: {
-    background: '#e8f5e9',
-    color: '#2e7d32',
-    padding: '0.5rem 0.8rem',
-    borderRadius: '4px',
+  bannerError: {
+    background: '#fef2f2',
+    color: '#b91c1c',
+    padding: '0.75rem 1rem',
+    borderRadius: '8px',
+    marginBottom: '1.2rem',
+    fontSize: '0.88rem',
+    border: '1px solid #fecaca',
+  },
+  securityNote: {
+    background: '#f0fdf4',
+    color: '#166534',
+    padding: '0.65rem 0.9rem',
+    borderRadius: '8px',
     fontSize: '0.82rem',
     marginBottom: '1.2rem',
-    border: '1px solid #c8e6c9',
+    border: '1px solid #bbf7d0',
+    lineHeight: '1.4',
+  },
+  footer: {
+    textAlign: 'center',
+    marginTop: '1.6rem',
+    fontSize: '0.9rem',
+    color: '#6b7280',
+  },
+  link: {
+    color: '#1a73e8',
+    fontWeight: '600',
+    textDecoration: 'none',
   },
 };
 
@@ -113,20 +189,32 @@ const Register = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [email, setEmail]           = useState('');
-  const [password, setPassword]     = useState('');
-  const [confirm, setConfirm]       = useState('');
-  const [role, setRole]             = useState('viewer');
-  const [apiError, setApiError]     = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('developer');
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+
   const [fieldErrors, setFieldErrors] = useState({});
-  const [loading, setLoading]       = useState(false);
+  const [apiError, setApiError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const strength = getStrength(password);
 
-  // Client-side validation
+  const roleDescriptions = {
+    viewer: 'Viewer: Can view projects and material specs in read-only mode.',
+    developer: 'Developer: Can create projects, add material specifications, and collaborate.',
+    admin: 'Admin: Full administrative control over all workspace projects and users.',
+  };
+
   const validate = () => {
     const errs = {};
-    if (!email) errs.email = 'Email is required.';
+    if (!name.trim()) errs.name = 'Full name is required.';
+    if (!email.trim()) {
+      errs.email = 'Email address is required.';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errs.email = 'Please provide a valid email address.';
+    }
     if (!password) {
       errs.password = 'Password is required.';
     } else if (password.length < 8) {
@@ -150,14 +238,21 @@ const Register = () => {
 
     setLoading(true);
     try {
-      // password is sent as plain text over HTTPS — the SERVER hashes it with bcrypt before storing
-      const { data } = await axios.post('/api/auth/register', { email, password, role });
-      // Backend returns a token on registration — auto-login the user
+      const { data } = await axios.post('/api/auth/register', {
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+        role,
+      });
+
+      // Auto login user with token and details
       login(data.token, {
         user_id: data.user_id,
+        name: data.name,
         email: data.email,
         role: data.role,
       });
+
       navigate('/dashboard');
     } catch (err) {
       setApiError(err.response?.data?.message || 'Registration failed. Please try again.');
@@ -169,93 +264,124 @@ const Register = () => {
   return (
     <div style={styles.page}>
       <div style={styles.card}>
-        <h2 style={styles.appTitle}>Material Optimization DBMS</h2>
-        <h3 style={styles.subtitle}>Create an account</h3>
-
-        {/* Security note */}
-        <div style={styles.hashNote}>
-          🔒 Your password is hashed with <strong>bcrypt (10 rounds)</strong> on the server before it is stored. It is never saved in plain text.
+        <div style={styles.header}>
+          <div style={styles.logoBadge}>⚙️</div>
+          <h2 style={styles.appTitle}>Material Optimization DBMS</h2>
+          <p style={styles.subtitle}>Create your engineering workspace account</p>
         </div>
 
-        {apiError && <div style={styles.apiError}>{apiError}</div>}
+        <div style={styles.securityNote}>
+          🛡️ <strong>Secure Storage:</strong> Passwords are cryptographically hashed using <strong>bcrypt (10 rounds)</strong> on the server before storage.
+        </div>
+
+        {apiError && <div style={styles.bannerError}>{apiError}</div>}
 
         <form onSubmit={handleSubmit} noValidate>
+          {/* Full Name */}
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="name">Full Name</label>
+            <input
+              id="name"
+              type="text"
+              style={{ ...styles.input, ...(fieldErrors.name ? styles.inputError : {}) }}
+              value={name}
+              onChange={(e) => { setName(e.target.value); setFieldErrors(f => ({ ...f, name: '' })); }}
+              placeholder="e.g. Alex Mercer"
+              required
+              autoFocus
+            />
+            {fieldErrors.name && <span style={styles.errorText}>{fieldErrors.name}</span>}
+          </div>
+
           {/* Email */}
-          <label style={styles.label} htmlFor="email">Email Address</label>
-          <input
-            id="email"
-            type="email"
-            style={{ ...styles.input, ...(fieldErrors.email ? styles.inputError : {}) }}
-            value={email}
-            onChange={(e) => { setEmail(e.target.value); setFieldErrors(f => ({ ...f, email: '' })); }}
-            placeholder="you@example.com"
-            required
-            autoFocus
-          />
-          {fieldErrors.email && <span style={styles.fieldError}>{fieldErrors.email}</span>}
-
-          {/* Password */}
-          <label style={styles.label} htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            style={{ ...styles.input, ...(fieldErrors.password ? styles.inputError : {}) }}
-            value={password}
-            onChange={(e) => { setPassword(e.target.value); setFieldErrors(f => ({ ...f, password: '' })); }}
-            placeholder="At least 8 characters"
-            required
-          />
-          {/* Strength bar */}
-          {password && (
-            <>
-              <div style={styles.strengthBar}>
-                <div style={{ height: '100%', width: strength.width, background: strength.color, transition: 'width 0.3s' }} />
-              </div>
-              <span style={{ ...styles.strengthLabel, color: strength.color }}>
-                Strength: {strength.label}
-              </span>
-            </>
-          )}
-          {fieldErrors.password && <span style={styles.fieldError}>{fieldErrors.password}</span>}
-
-          {/* Confirm Password */}
-          <label style={styles.label} htmlFor="confirm">Confirm Password</label>
-          <input
-            id="confirm"
-            type="password"
-            style={{ ...styles.input, ...(fieldErrors.confirm ? styles.inputError : {}), marginBottom: '0.25rem' }}
-            value={confirm}
-            onChange={(e) => { setConfirm(e.target.value); setFieldErrors(f => ({ ...f, confirm: '' })); }}
-            placeholder="Re-enter your password"
-            required
-          />
-          {fieldErrors.confirm && <span style={styles.fieldError}>{fieldErrors.confirm}</span>}
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="email">Email Address</label>
+            <input
+              id="email"
+              type="email"
+              style={{ ...styles.input, ...(fieldErrors.email ? styles.inputError : {}) }}
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); setFieldErrors(f => ({ ...f, email: '' })); }}
+              placeholder="you@company.com"
+              required
+            />
+            {fieldErrors.email && <span style={styles.errorText}>{fieldErrors.email}</span>}
+          </div>
 
           {/* Role */}
-          <label style={{ ...styles.label, marginTop: '0.5rem' }} htmlFor="role">Role</label>
-          <select
-            id="role"
-            style={styles.select}
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-          >
-            <option value="viewer">Viewer — read-only access</option>
-            <option value="developer">Developer — can edit projects</option>
-            <option value="admin">Admin — full access</option>
-          </select>
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="role">Workspace Role</label>
+            <select
+              id="role"
+              style={styles.select}
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="developer">Developer (Default)</option>
+              <option value="admin">Administrator</option>
+              <option value="viewer">Viewer (Read-only)</option>
+            </select>
+            <span style={styles.roleDescription}>{roleDescriptions[role]}</span>
+          </div>
+
+          {/* Password */}
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              style={{ ...styles.input, ...(fieldErrors.password ? styles.inputError : {}) }}
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setFieldErrors(f => ({ ...f, password: '' })); }}
+              placeholder="Minimum 8 characters"
+              required
+            />
+            {password && (
+              <div style={styles.strengthContainer}>
+                <div style={styles.strengthTrack}>
+                  <div
+                    style={{
+                      ...styles.strengthFill,
+                      width: strength.width,
+                      backgroundColor: strength.color,
+                    }}
+                  />
+                </div>
+                <span style={{ ...styles.strengthLabel, color: strength.color }}>
+                  Password Strength: {strength.label}
+                </span>
+              </div>
+            )}
+            {fieldErrors.password && <span style={styles.errorText}>{fieldErrors.password}</span>}
+          </div>
+
+          {/* Confirm Password */}
+          <div style={styles.formGroup}>
+            <label style={styles.label} htmlFor="confirm">Confirm Password</label>
+            <input
+              id="confirm"
+              type="password"
+              style={{ ...styles.input, ...(fieldErrors.confirm ? styles.inputError : {}) }}
+              value={confirm}
+              onChange={(e) => { setConfirm(e.target.value); setFieldErrors(f => ({ ...f, confirm: '' })); }}
+              placeholder="Re-enter your password"
+              required
+            />
+            {fieldErrors.confirm && <span style={styles.errorText}>{fieldErrors.confirm}</span>}
+          </div>
 
           <button
             type="submit"
             style={{ ...styles.button, ...(loading ? styles.buttonDisabled : {}) }}
             disabled={loading}
           >
-            {loading ? 'Creating account...' : 'Create Account'}
+            {loading ? 'Creating Account...' : 'Complete Registration'}
           </button>
         </form>
 
         <div style={styles.footer}>
           Already have an account?{' '}
-          <Link to="/login" style={styles.link}>Sign in</Link>
+          <Link to="/login" style={styles.link}>Sign In</Link>
         </div>
       </div>
     </div>
