@@ -17,6 +17,11 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // --- Input validation ---
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required.' });
+        }
+
         // Check for user email
         const [users] = await db.execute('SELECT * FROM Users WHERE email = ?', [email]);
         
@@ -45,25 +50,34 @@ const login = async (req, res) => {
     }
 };
 
-// @desc    Register a new user (Added for testing purposes)
+// @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
 const register = async (req, res) => {
     try {
         const { email, password, role } = req.body;
 
+        // --- Input validation ---
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required.' });
+        }
+        if (password.length < 8) {
+            return res.status(400).json({ message: 'Password must be at least 8 characters.' });
+        }
+        const allowedRoles = ['admin', 'developer', 'viewer'];
+        const userRole = allowedRoles.includes(role) ? role : 'viewer';
+
         // Check if user exists
         const [existingUsers] = await db.execute('SELECT * FROM Users WHERE email = ?', [email]);
         if (existingUsers.length > 0) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(400).json({ message: 'An account with that email already exists.' });
         }
 
-        // Hash password
+        // Hash password with bcrypt (10 salt rounds) — plain-text password is NEVER stored
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Insert user
-        const userRole = role || 'viewer';
         const [result] = await db.execute(
             'INSERT INTO Users (email, password_hash, role) VALUES (?, ?, ?)',
             [email, hashedPassword, userRole]
