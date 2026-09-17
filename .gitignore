@@ -16,6 +16,9 @@ server/.env
 *.env
 !.env.example
 
+# Setup screenshots and local setup media
+dbms setup/
+
 # Caches and temporary files
 .cache/
 .eslintcache
