@@ -1,2 +1,34 @@
-server/.env
+# Dependencies
+node_modules/
+*/node_modules/
+client/node_modules/
+server/node_modules/
 
+# Production builds
+build/
+client/build/
+dist/
+
+# Environment files and credentials
+.env
+.env*
+server/.env
+*.env
+!.env.example
+
+# Caches and temporary files
+.cache/
+.eslintcache
+client/node_modules/.cache/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
