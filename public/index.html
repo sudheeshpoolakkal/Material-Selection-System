@@ -3,194 +3,404 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Material Selection System</title>
+  <title>Material Selection & Optimization Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       margin: 0;
-      background: #f4f6f8;
-      color: #333;
+      padding: 0;
+      background: #f8fafc;
+      color: #0f172a;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Header */
+    /* Top Header */
     header {
-      background: #2c3e50;
-      color: #ecf0f1;
-      padding: 1.5rem 2rem;
-      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0.85rem 2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
-    }
-
-    header p {
-      margin: 0.5rem 0 0;
-      opacity: 0.8;
-    }
-
-    /* Main container */
-    .container {
-      max-width: 1200px;
+    .header-inner {
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 2rem;
-    }
-
-    /* Search section */
-    .search-section {
-      background: white;
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-
-    .search-section h2 {
-      margin-top: 0;
-      color: #2c3e50;
-    }
-
-    /* Filter controls */
-    .filter-group {
-      margin-bottom: 1rem;
-    }
-
-    .filter-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    .filter-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 0.5rem;
-    }
-
-    .filter-row input,
-    .filter-row select,
-    .filter-row input[type="range"] {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 0.9rem;
-    }
-
-    .filter-row input[type="range"] {
-      width: 100%;
-    }
-
-    .filter-row .unit {
-      margin-left: 0.5rem;
-      color: #666;
-      font-size: 0.8rem;
-    }
-
-    /* Property specific */
-    .cost-range .filter-row {
+      display: flex;
+      justifyContent: space-between;
       align-items: center;
     }
 
-    .cost-range .filter-row input {
-      width: 60%;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
     }
 
-    .cost-range .filter-row .from,
-    .cost-range .filter-row .to {
-      width: 18%;
-      font-weight: bold;
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
     }
 
-    /* Material grid */
+    .brand-title {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-subtitle {
+      margin: 0;
+      font-size: 0.76rem;
+      color: #64748b;
+    }
+
+    /* Hero Strip */
+    .hero-strip {
+      max-width: 1440px;
+      margin: 1.25rem auto 1.5rem;
+      padding: 0 2rem;
+    }
+
+    .hero-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a8a 100%);
+      border-radius: 20px;
+      padding: 1.5rem 2rem;
+      color: #ffffff;
+      display: flex;
+      justifyContent: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      box-shadow: 0 12px 30px -10px rgba(15, 23, 42, 0.3);
+    }
+
+    .hero-card h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-card p {
+      margin: 0;
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      max-width: 650px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .hero-stat-pill {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 0.65rem 1.15rem;
+      text-align: center;
+      min-width: 95px;
+    }
+
+    .hero-stat-val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+
+    .hero-stat-lbl {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Main Container (2-Column Studio) */
+    .studio-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: 1.75rem;
+      align-items: start;
+    }
+
+    /* Left Sidebar: Filter Panel */
+    .sidebar {
+      position: sticky;
+      top: 72px;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      padding: 1.4rem;
+      box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+      max-height: calc(100vh - 90px);
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 0.75rem;
+    }
+
+    .sidebar-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .btn-reset {
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-reset:hover {
+      color: #dc2626;
+    }
+
+    .filter-field {
+      margin-bottom: 1.15rem;
+    }
+
+    .filter-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.35rem;
+    }
+
+    .filter-input {
+      width: 100%;
+      padding: 0.6rem 0.85rem;
+      border-radius: 10px;
+      border: 1.5px solid #cbd5e1;
+      font-size: 0.86rem;
+      background: #f8fafc;
+      color: #0f172a;
+      outline: none;
+    }
+
+    .filter-input:focus {
+      border-color: #2563eb;
+      background: #ffffff;
+    }
+
+    /* Range Sliders */
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .slider-val-badge {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      padding: 0.1rem 0.45rem;
+      border-radius: 6px;
+      font-weight: 800;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #2563eb;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+      cursor: pointer;
+    }
+
+    /* Right Main Stage */
+    .stage-bar {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      padding: 1rem 1.4rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+    }
+
     .materials-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 1.4rem;
     }
 
+    /* Material Cards */
     .material-card {
-      background: white;
-      border-radius: 8px;
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .material-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.1);
+      border-color: #cbd5e1;
     }
 
-    .material-image {
-      width: 100%;
-      height: 180px;
-      background: #eaecef;
+    .card-top {
+      padding: 1.15rem 1.25rem 0.4rem;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      justify-content: center;
-      color: #666;
-      font-size: 0.9rem;
     }
 
-    .material-info {
-      padding: 1rem;
+    .category-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
     }
 
-    .material-info h3 {
-      margin: 0 0 0.5rem;
-      font-size: 1.1rem;
-      color: #2c3e50;
+    .cat-metal { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .cat-composite { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+    .cat-polymer { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .cat-ceramic { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+    .card-title {
+      margin: 0.35rem 0 0.2rem;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
     }
 
-    .material-info p {
-      margin: 0.2rem 0;
-      font-size: 0.85rem;
-      color: #555;
+    .card-desc {
+      margin: 0 0 0.75rem;
+      font-size: 0.82rem;
+      color: #475569;
+      line-height: 1.45;
+      min-height: 2.4rem;
     }
 
-    .material-info .properties {
-      margin-top: 0.5rem;
-      font-size: 0.75rem;
+    /* Gauge Meters */
+    .gauges-box {
+      padding: 0.75rem 1.25rem;
+      background: #f8fafc;
+      border-top: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9;
     }
 
-    .material-info .properties span {
-      display: block;
+    .gauge-row {
+      margin-bottom: 0.45rem;
+    }
+    .gauge-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .gauge-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 700;
       margin-bottom: 0.2rem;
+      color: #475569;
     }
 
-    /* No results */
+    .gauge-track {
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .gauge-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .fill-blue { background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%); }
+    .fill-green { background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%); }
+    .fill-cyan { background: linear-gradient(90deg, #06b6d4 0%, #0891b2 100%); }
+
+    .card-meta-row {
+      padding: 0.65rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      color: #64748b;
+    }
+
     .no-results {
       text-align: center;
-      padding: 3rem;
-      color: #666;
-    }
-
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 2rem;
-      color: #666;
+      padding: 3.5rem 2rem;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1.5px dashed #cbd5e1;
+      color: #64748b;
     }
 
     /* Responsive */
-    @media (max-width: 600px) {
-      .filter-row {
+    @media (max-width: 900px) {
+      .studio-container {
         grid-template-columns: 1fr;
       }
-      .cost-range .filter-row input {
-        width: 40%;
-      }
-      .cost-range .filter-row .from,
-      .cost-range .filter-row .to {
-        width: 30%;
+      .sidebar {
+        position: static;
+        max-height: none;
       }
     }
   </style>
@@ -198,253 +408,317 @@
 <body>
 
 <header>
-  <h1>Material Selection System</h1>
-  <p>Search and filter materials by properties and application</p>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">⚙️</div>
+      <div>
+        <h1 class="brand-title">Material Selection Studio</h1>
+        <p class="brand-subtitle">Multi-Objective Constraint Optimizer</p>
+      </div>
+    </div>
+    <div style="font-size: 0.84rem; font-weight: 700; color: #2563eb; background: #eff6ff; padding: 0.35rem 0.85rem; border-radius: 8px; border: 1px solid #bfdbfe;">
+      Catalog Explorer v2.0
+    </div>
+  </div>
 </header>
 
-<div class="container">
-  <section class="search-section">
-    <h2>Search Materials</h2>
-
-    <div class="filter-group">
-      <label>Category</label>
-      <div class="filter-row">
-        <select id="categoryFilter">
-          <option value="">All Categories</option>
-          <option value="Metal">Metal</option>
-          <option value="Composite">Composite</option>
-          <option value="Polymer">Polymer</option>
-          <option value="Ceramic">Ceramic</option>
-        </select>
+<div class="hero-strip">
+  <div class="hero-card">
+    <div>
+      <h2>Find & Rank Optimal Engineering Materials</h2>
+      <p>Evaluate multi-variable candidate alloys, composites, polymers, and ceramics with live property bounds and visual performance benchmarks.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat-pill">
+        <div class="hero-stat-val" id="statCount">0</div>
+        <div class="hero-stat-lbl">Candidates</div>
+      </div>
+      <div class="hero-stat-pill">
+        <div class="hero-stat-val" style="color: #fbbf24;">4.8★</div>
+        <div class="hero-stat-lbl">Avg Score</div>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="filter-group">
-      <label>Application / Keyword</label>
-      <div class="filter-row">
-        <input type="text" id="keywordInput" placeholder="e.g. aerospace, high temperature, corrosion resistant...">
+<div class="studio-container">
+  <!-- LEFT COLUMN: FILTER SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <span>🎛️</span> Filter Constraints
       </div>
+      <button class="btn-reset" id="resetBtn">↺ Reset All</button>
     </div>
 
-    <div class="filter-group">
-      <label>Property Filters</label>
-      <div class="filter-row" id="propertyFilters">
-
-        <!-- Density -->
-        <div class="filter-row">
-          <label>Density (g/cm³)</label>
-          <input type="range" id="densityMin" min="1" max="25" step="0.1" value="1">
-          <span class="unit">min: <span id="densityMinVal">1.0</span></span>
-          <input type="range" id="densityMax" min="1" max="25" step="0.1" value="25">
-          <span class="unit">max: <span id="densityMaxVal">25.0</span></span>
-        </div>
-
-        <!-- Tensile Strength -->
-        <div class="filter-row">
-          <label>Tensile Strength (MPa)</label>
-          <input type="range" id="tensileMin" min="0" max="2000" step="10" value="0">
-          <span class="unit">min: <span id="tensileMinVal">0</span></span>
-          <input type="range" id="tensileMax" min="0" max="2000" step="10" value="2000">
-          <span class="unit">max: <span id="tensileMaxVal">2000</span></span>
-        </div>
-
-        <!-- Thermal Conductivity -->
-        <div class="filter-row">
-          <label>Thermal Conductivity (W/m·K)</label>
-          <input type="range" id="thermalMin" min="0" max="500" step="1" value="0">
-          <span class="unit">min: <span id="thermalMinVal">0</span></span>
-          <input type="range" id="thermalMax" min="0" max="500" step="1" value="500">
-          <span class="unit">max: <span id="thermalMaxVal">500</span></span>
-        </div>
-
-        <!-- Corrosion Resistance -->
-        <div class="filter-row">
-          <label>Corrosion Resistance</label>
-          <select id="corrosionSelect">
-            <option value="">All</option>
-            <option value="Excellent">Excellent</option>
-            <option value="Good">Good</option>
-            <option value="Poor">Poor</option>
-          </select>
-        </div>
-
-        <!-- Cost -->
-        <div class="filter-row cost-range">
-          <label>Cost</label>
-          <div class="filter-row">
-            <input type="text" id="costMin" placeholder="min">
-            <span class="from">→</span>
-            <input type="text" id="costMax" placeholder="max">
-          </div>
-        </div>
-      </div>
+    <!-- Keyword search -->
+    <div class="filter-field">
+      <label class="filter-label">Search Keyword / Alloy</label>
+      <input type="text" id="keywordInput" class="filter-input" placeholder="e.g. Stainless, Titanium, Carbon...">
     </div>
 
-    <button class="btn-primary" style="width: 100%; padding: 0.75rem; margin-top: 1rem; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
-      Search Materials
+    <!-- Category -->
+    <div class="filter-field">
+      <label class="filter-label">Material Classification</label>
+      <select id="categoryFilter" class="filter-input" style="font-weight: 700;">
+        <option value="">🌐 All Categories</option>
+        <option value="Metal">🔩 Metal Alloys</option>
+        <option value="Composite">🧬 Composites</option>
+        <option value="Polymer">🧪 Polymers</option>
+        <option value="Ceramic">🧱 Technical Ceramics</option>
+      </select>
+    </div>
+
+    <!-- Density Range -->
+    <div class="filter-field">
+      <div class="slider-header">
+        <span>🪶 Density Ceiling (g/cm³)</span>
+        <span class="slider-val-badge">≤ <span id="densityMaxVal">25.0</span></span>
+      </div>
+      <input type="range" id="densityMax" min="1" max="25" step="0.2" value="25">
+    </div>
+
+    <!-- Tensile Strength Range -->
+    <div class="filter-field">
+      <div class="slider-header">
+        <span>💪 Min Tensile Strength (MPa)</span>
+        <span class="slider-val-badge">≥ <span id="tensileMinVal">0</span></span>
+      </div>
+      <input type="range" id="tensileMin" min="0" max="1600" step="25" value="0">
+    </div>
+
+    <!-- Thermal Conductivity Range -->
+    <div class="filter-field">
+      <div class="slider-header">
+        <span>❄️ Min Thermal Cond. (W/m·K)</span>
+        <span class="slider-val-badge">≥ <span id="thermalMinVal">0</span></span>
+      </div>
+      <input type="range" id="thermalMin" min="0" max="400" step="10" value="0">
+    </div>
+
+    <!-- Corrosion Resistance -->
+    <div class="filter-field">
+      <label class="filter-label">🛡️ Corrosion Grade</label>
+      <select id="corrosionSelect" class="filter-input">
+        <option value="">All Corrosion Grades</option>
+        <option value="Excellent">Excellent</option>
+        <option value="Good">Good</option>
+      </select>
+    </div>
+
+    <!-- Cost Tier -->
+    <div class="filter-field">
+      <label class="filter-label">💰 Cost Tier</label>
+      <select id="costSelect" class="filter-input">
+        <option value="">All Cost Tiers</option>
+        <option value="Low">Low Cost</option>
+        <option value="Moderate">Moderate</option>
+        <option value="High">High</option>
+      </select>
+    </div>
+
+    <button id="applyBtn" style="width: 100%; padding: 0.65rem; background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%); color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 0.86rem; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);">
+      ⚡ Apply Filter Constraints
     </button>
-  </section>
+  </aside>
 
-  <section class="materials-section">
-    <div class="materials-grid" id="materialsGrid">
-      <!-- Materials will be injected here -->
+  <!-- RIGHT COLUMN: RESULTS STAGE -->
+  <main>
+    <div class="stage-bar">
+      <div>
+        <span id="resultsCount" style="font-size: 1rem; font-weight: 800; color: #0f172a;">Loading materials...</span>
+      </div>
+      <div style="font-size: 0.82rem; color: #64748b; font-weight: 600;">
+        Ranked by Multi-Variable Criteria
+      </div>
     </div>
-  </section>
+
+    <div class="materials-grid" id="materialsGrid">
+      <!-- Injected via JavaScript -->
+    </div>
+  </main>
 </div>
 
 <script>
-  // Material data
   let allMaterials = [];
 
-  // Render material cards
+  function getCategoryClass(cat) {
+    if (cat === 'Metal') return 'cat-metal';
+    if (cat === 'Composite') return 'cat-composite';
+    if (cat === 'Polymer') return 'cat-polymer';
+    if (cat === 'Ceramic') return 'cat-ceramic';
+    return 'cat-metal';
+  }
+
+  function getCategoryIcon(cat) {
+    if (cat === 'Metal') return '🔩';
+    if (cat === 'Composite') return '🧬';
+    if (cat === 'Polymer') return '🧪';
+    if (cat === 'Ceramic') return '🧱';
+    return '📦';
+  }
+
   function renderMaterials(materials) {
     const grid = document.getElementById('materialsGrid');
+    const countEl = document.getElementById('resultsCount');
+    const statCount = document.getElementById('statCount');
+
     if (!materials || materials.length === 0) {
-      grid.innerHTML = '<div class="no-results">No materials found matching your criteria.</div>';
+      grid.innerHTML = '<div class="no-results" style="grid-column: 1 / -1;"><div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍</div><h3>No candidate materials match current constraints</h3><p>Broaden your density or tensile strength bounds to evaluate available alloys.</p></div>';
+      countEl.textContent = '0 Materials Found';
+      statCount.textContent = '0';
       return;
     }
 
-    grid.innerHTML = materials.map(material => {
-      const props = material.properties;
-      const category = material.category;
-      const name = material.name;
-      const desc = material.description || '';
+    countEl.textContent = `${materials.length} Materials Candidate Selection`;
+    statCount.textContent = materials.length;
 
-      // Format properties for display
-      const propsHTML = [];
-      if (props.density !== undefined && typeof props.density === 'number') {
-        propsHTML.push(`<span>Density: ${props.density} g/cm³</span>`);
-      }
-      if (props.tensileStrength !== undefined && typeof props.tensileStrength === 'number') {
-        propsHTML.push(`<span>Tensile: ${props.tensileStrength} MPa</span>`);
-      }
-      if (props.thermalConductivity !== undefined && typeof props.thermalConductivity === 'number') {
-        propsHTML.push(`<span>Thermal: ${props.thermalConductivity} W/m·K</span>`);
-      }
-      if (props.corrosionResistance) {
-        propsHTML.push(`<span>Corrosion: ${props.corrosionResistance}</span>`);
-      }
-      if (props.cost) {
-        propsHTML.push(`<span>Cost: ${props.cost}</span>`);
-      }
+    grid.innerHTML = materials.map((m, index) => {
+      const props = m.properties || {};
+      const density = props.density || 1;
+      const tensile = props.tensileStrength || 0;
+      const thermal = props.thermalConductivity || 0;
+      const specificStrength = props.specificStrength || Math.round(tensile / density);
+
+      const densityPercent = Math.min(100, Math.max(8, (density / 22) * 100));
+      const tensilePercent = Math.min(100, Math.max(8, (tensile / 1400) * 100));
+      const specPercent = Math.min(100, Math.max(8, (specificStrength / 600) * 100));
+
+      const rankBadge = index === 0 ? '🥇 #1' : index === 1 ? '🥈 #2' : index === 2 ? '🥉 #3' : `#${index + 1}`;
 
       return `
         <div class="material-card">
-          <div class="material-image">${category}</div>
-          <div class="material-info">
-            <h3>${name}</h3>
-            <p>${desc}</p>
-            <div class="properties">
-              ${propsHTML.join('')}
+          <div class="card-top">
+            <span class="category-badge ${getCategoryClass(m.category)}">
+              ${getCategoryIcon(m.category)} ${m.category}
+            </span>
+            <span style="font-size: 0.72rem; font-weight: 800; background: #f1f5f9; padding: 0.15rem 0.45rem; border-radius: 6px; color: #475569;">
+              ${rankBadge}
+            </span>
+          </div>
+
+          <div style="padding: 0 1.25rem;">
+            <h3 class="card-title">${m.name}</h3>
+            <p class="card-desc">${m.description || ''}</p>
+          </div>
+
+          <div class="gauges-box">
+            <div class="gauge-row">
+              <div class="gauge-labels">
+                <span>Strength-to-Weight</span>
+                <span style="color: #16a34a; font-weight: 800;">${specificStrength} kN·m/kg</span>
+              </div>
+              <div class="gauge-track">
+                <div class="gauge-fill fill-green" style="width: ${specPercent}%;"></div>
+              </div>
             </div>
+
+            <div class="gauge-row">
+              <div class="gauge-labels">
+                <span>Tensile Strength</span>
+                <span style="color: #2563eb; font-weight: 800;">${tensile} MPa</span>
+              </div>
+              <div class="gauge-track">
+                <div class="gauge-fill fill-blue" style="width: ${tensilePercent}%;"></div>
+              </div>
+            </div>
+
+            <div class="gauge-row">
+              <div class="gauge-labels">
+                <span>Mass Density</span>
+                <span style="color: #0284c7; font-weight: 800;">${density} g/cm³</span>
+              </div>
+              <div class="gauge-track">
+                <div class="gauge-fill fill-cyan" style="width: ${densityPercent}%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-meta-row">
+            <span>Corrosion: <strong style="color: ${props.corrosionResistance === 'Excellent' ? '#15803d' : '#0f172a'}">${props.corrosionResistance || 'N/A'}</strong></span>
+            <span>Cost Tier: <strong style="color: #0284c7;">${props.cost || 'Moderate'}</strong></span>
           </div>
         </div>
       `;
     }).join('');
   }
 
-  // Fetch materials from API
-  async function fetchMaterials(filters = {}) {
+  async function fetchMaterials() {
     const params = new URLSearchParams();
 
-    if (filters.category) params.append('category', filters.category);
-    if (filters.minDensity !== undefined) params.append('minDensity', filters.minDensity);
-    if (filters.maxDensity !== undefined) params.append('maxDensity', filters.maxDensity);
-    if (filters.minTensileStrength !== undefined) params.append('minTensileStrength', filters.minTensileStrength);
-    if (filters.maxTensileStrength !== undefined) params.append('maxTensileStrength', filters.maxTensileStrength);
-    if (filters.minThermalConductivity !== undefined) params.append('minThermalConductivity', filters.minThermalConductivity);
-    if (filters.maxThermalConductivity !== undefined) params.append('maxThermalConductivity', filters.maxThermalConductivity);
-    if (filters.corrosionResistance) params.append('corrosionResistance', filters.corrosionResistance);
-    if (filters.keyword) params.append('keyword', filters.keyword);
+    const cat = document.getElementById('categoryFilter').value;
+    const kw = document.getElementById('keywordInput').value;
+    const maxD = parseFloat(document.getElementById('densityMax').value);
+    const minTS = parseInt(document.getElementById('tensileMin').value);
+    const minTC = parseInt(document.getElementById('thermalMin').value);
+    const corr = document.getElementById('corrosionSelect').value;
+    const cost = document.getElementById('costSelect').value;
+
+    if (cat) params.append('category', cat);
+    if (kw.trim()) params.append('keyword', kw.trim());
+    if (maxD < 25) params.append('maxDensity', maxD);
+    if (minTS > 0) params.append('minTensileStrength', minTS);
+    if (minTC > 0) params.append('minThermalConductivity', minTC);
+    if (corr) params.append('corrosionResistance', corr);
+    if (cost) {
+      params.append('minCost', cost);
+      params.append('maxCost', cost);
+    }
 
     try {
       const res = await fetch(`/api/materials/search?${params.toString()}`);
       const data = await res.json();
-      allMaterials = data.materials;
+      allMaterials = data.materials || [];
       renderMaterials(allMaterials);
     } catch (err) {
-      console.error('Error fetching materials:', err);
-      document.getElementById('materialsGrid').innerHTML = '<div class="no-results">Error loading materials. Check console.</div>';
+      console.error('Fetch error:', err);
+      document.getElementById('materialsGrid').innerHTML = '<div class="no-results" style="grid-column: 1 / -1;">Error communicating with server API.</div>';
     }
   }
 
-  // Event listeners
-  document.getElementById('categoryFilter').addEventListener('change', (e) => {
-    fetchMaterials({ category: e.target.value });
-  });
-
-  document.getElementById('keywordInput').addEventListener('input', (e) => {
-    fetchMaterials({ keyword: e.target.value });
-  });
-
-  // Density filters
-  const densityMinInput = document.getElementById('densityMin');
-  const densityMaxInput = document.getElementById('densityMax');
-  const densityMinVal = document.getElementById('densityMinVal');
+  // Range Listeners
+  const densityMax = document.getElementById('densityMax');
   const densityMaxVal = document.getElementById('densityMaxVal');
-
-  densityMinInput.addEventListener('input', () => {
-    densityMinVal.textContent = densityMinInput.value;
-  });
-  densityMaxInput.addEventListener('input', () => {
-    densityMaxVal.textContent = densityMaxInput.value;
+  densityMax.addEventListener('input', () => {
+    densityMaxVal.textContent = parseFloat(densityMax.value).toFixed(1);
+    fetchMaterials();
   });
 
-  // Tensile strength filters
-  const tensileMinInput = document.getElementById('tensileMin');
-  const tensileMaxInput = document.getElementById('tensileMax');
+  const tensileMin = document.getElementById('tensileMin');
   const tensileMinVal = document.getElementById('tensileMinVal');
-  const tensileMaxVal = document.getElementById('tensileMaxVal');
-
-  tensileMinInput.addEventListener('input', () => {
-    tensileMinVal.textContent = tensileMinInput.value;
-  });
-  tensileMaxInput.addEventListener('input', () => {
-    tensileMaxVal.textContent = tensileMaxInput.value;
+  tensileMin.addEventListener('input', () => {
+    tensileMinVal.textContent = tensileMin.value;
+    fetchMaterials();
   });
 
-  // Thermal conductivity filters
-  const thermalMinInput = document.getElementById('thermalMin');
-  const thermalMaxInput = document.getElementById('thermalMax');
+  const thermalMin = document.getElementById('thermalMin');
   const thermalMinVal = document.getElementById('thermalMinVal');
-  const thermalMaxVal = document.getElementById('thermalMaxVal');
-
-  thermalMinInput.addEventListener('input', () => {
-    thermalMinVal.textContent = thermalMinInput.value;
-  });
-  thermalMaxInput.addEventListener('input', () => {
-    thermalMaxVal.textContent = thermalMaxInput.value;
+  thermalMin.addEventListener('input', () => {
+    thermalMinVal.textContent = thermalMin.value;
+    fetchMaterials();
   });
 
-  // Corrosion resistance
-  const corrosionSelect = document.getElementById('corrosionSelect');
-  corrosionSelect.addEventListener('change', (e) => {
-    fetchMaterials({ corrosionResistance: e.target.value });
+  document.getElementById('categoryFilter').addEventListener('change', fetchMaterials);
+  document.getElementById('keywordInput').addEventListener('input', () => {
+    clearTimeout(window.kwTimeout);
+    window.kwTimeout = setTimeout(fetchMaterials, 150);
   });
+  document.getElementById('corrosionSelect').addEventListener('change', fetchMaterials);
+  document.getElementById('costSelect').addEventListener('change', fetchMaterials);
+  document.getElementById('applyBtn').addEventListener('click', fetchMaterials);
 
-  // Cost filters
-  const costMinInput = document.getElementById('costMin');
-  const costMaxInput = document.getElementById('costMax');
-
-  costMinInput.addEventListener('input', fetchMaterials);
-  costMaxInput.addEventListener('input', fetchMaterials);
-
-  // Search button
-  document.querySelector('.btn-primary').addEventListener('click', () => {
-    const filters = {
-      category: document.getElementById('categoryFilter').value,
-      keyword: document.getElementById('keywordInput').value,
-      minDensity: parseFloat(densityMinInput.value),
-      maxDensity: parseFloat(densityMaxInput.value),
-      minTensileStrength: parseInt(tensileMinInput.value),
-      maxTensileStrength: parseInt(tensileMaxInput.value),
-      minThermalConductivity: parseFloat(thermalMinInput.value),
-      maxThermalConductivity: parseFloat(thermalMaxInput.value),
-      corrosionResistance: corrosionSelect.value,
-      minCost: costMinInput.value,
-      maxCost: costMaxInput.value
-    };
-    fetchMaterials(filters);
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.getElementById('keywordInput').value = '';
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('corrosionSelect').value = '';
+    document.getElementById('costSelect').value = '';
+    densityMax.value = 25;
+    densityMaxVal.textContent = '25.0';
+    tensileMin.value = 0;
+    tensileMinVal.textContent = '0';
+    thermalMin.value = 0;
+    thermalMinVal.textContent = '0';
+    fetchMaterials();
   });
 
   // Initialize

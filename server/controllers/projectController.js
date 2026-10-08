@@ -89,6 +89,7 @@ const getProjects = async (req, res) => {
                 p.project_id,
                 p.name,
                 p.owner_id,
+                p.application,
                 p.created_at,
                 u.name as owner_name,
                 u.email as owner_email,
@@ -118,16 +119,18 @@ const getProjects = async (req, res) => {
 // @access  Private
 const createProject = async (req, res) => {
     try {
-        const { name, max_weight, target_cost } = req.body;
+        const { name, max_weight, target_cost, application } = req.body;
         const userId = req.user.id;
 
         if (!name || !name.trim()) {
             return res.status(400).json({ message: 'Project name is required.' });
         }
 
+        const appVal = application && application.trim() ? application.trim() : 'General Mechanical';
+
         const [result] = await db.execute(
-            'INSERT INTO Projects (name, owner_id) VALUES (?, ?)',
-            [name.trim(), userId]
+            'INSERT INTO Projects (name, owner_id, application) VALUES (?, ?, ?)',
+            [name.trim(), userId, appVal]
         );
 
         const projectId = result.insertId;

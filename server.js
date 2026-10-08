@@ -5,9 +5,10 @@ const fs = require('fs');
 const app = express();
 const PORT = 3000;
 
-// Resolve materials.json path - use the known project location
-// The project is at C:\material-selection-system\ (single C:)
-const dataPath = 'C:\\\\material-selection-system\\\\materials.json';
+// Resolve materials.json path - prefer local repository data file with fallback
+const localDataPath = path.join(__dirname, 'server', 'data', 'materials.json');
+const fallbackDataPath = 'C:\\\\material-selection-system\\\\materials.json';
+const dataPath = fs.existsSync(localDataPath) ? localDataPath : fallbackDataPath;
 
 console.log('dataPath:', dataPath);
 console.log('existsSync:', fs.existsSync(dataPath));
@@ -30,7 +31,17 @@ app.get('/api/materials/search', (req, res) => {
 
     const { minDensity, maxDensity, minTensileStrength, maxTensileStrength,
             minThermalConductivity, maxThermalConductivity, minCost, maxCost,
-            corrosionResistance, category } = req.query;
+            corrosionResistance, category, keyword } = req.query;
+
+    if (keyword && keyword.trim() !== '') {
+      const kw = keyword.trim().toLowerCase();
+      results = results.filter(m => 
+        (m.name && m.name.toLowerCase().includes(kw)) ||
+        (m.description && m.description.toLowerCase().includes(kw)) ||
+        (m.category && m.category.toLowerCase().includes(kw)) ||
+        (m.applications && m.applications.some(a => a.toLowerCase().includes(kw)))
+      );
+    }
 
     if (minDensity !== undefined || maxDensity !== undefined) {
       const minD = minDensity !== undefined ? parseFloat(minDensity) : -Infinity;

@@ -1,0 +1,747 @@
+{
+  "materials": [
+    {
+      "id": 1,
+      "name": "Stainless Steel 304",
+      "category": "Metal",
+      "description": "Austenitic chromium-nickel stainless steel with outstanding corrosion resistance, hygienic finish, and reliable formability.",
+      "applications": [
+        "Chemical & Petrochemical",
+        "Marine & Offshore",
+        "Food & Beverage",
+        "Structural & Heavy Machinery"
+      ],
+      "properties": {
+        "density": 8,
+        "tensileStrength": 515,
+        "specificStrength": 64.4,
+        "thermalConductivity": 16.3,
+        "corrosionResistance": "Excellent",
+        "cost": "Moderate",
+        "hardness": 201,
+        "meltingPoint": 1400,
+        "maxServiceTemp": 870
+      },
+      "rating": 4.8,
+      "reviewCount": 4,
+      "reviews": [
+        {
+          "reviewId": "rev-1790798911161",
+          "userName": "Test User",
+          "role": "Materials & Design Specialist",
+          "rating": 5,
+          "applicationTested": "Aerospace",
+          "comment": "Great performance under load.",
+          "date": "2026-09-30"
+        },
+        {
+          "reviewId": "rev-101",
+          "userName": "Marcus Vance",
+          "role": "Chemical Plant Piping Lead",
+          "rating": 5,
+          "applicationTested": "Acidic Storage Tanks & Valves",
+          "comment": "Superb pitting resistance against mild acids and washdown cycles. Easy to TIG weld with 308L filler, minimal carbide precipitation.",
+          "date": "2026-07-12"
+        },
+        {
+          "reviewId": "rev-102",
+          "userName": "Sarah Jenkins",
+          "role": "Offshore Equipment Engineer",
+          "rating": 4,
+          "applicationTested": "Marine Splash Zone Brackets",
+          "comment": "Performs reliably in atmospheric salt fog, though in permanent submerged saltwater we recommend 316L to avoid crevice corrosion.",
+          "date": "2026-08-04"
+        },
+        {
+          "reviewId": "rev-103",
+          "userName": "David Zhao",
+          "role": "Fabrication Shop Manager",
+          "rating": 5,
+          "applicationTested": "Food Grade Sanitary Conveyors",
+          "comment": "Excellent surface polish capability. Work hardens during deep drawing, so keep cutting tools sharp and speeds moderate.",
+          "date": "2026-09-15"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Aluminum 6061-T6",
+      "category": "Metal",
+      "description": "Precipitation-hardened aluminum alloy delivering medium-to-high strength, exceptional corrosion resistance, and superb machinability.",
+      "applications": [
+        "Aerospace & Defense",
+        "Automotive Lightweighting",
+        "Marine & Offshore",
+        "Structural & Heavy Machinery"
+      ],
+      "properties": {
+        "density": 2.7,
+        "tensileStrength": 310,
+        "specificStrength": 114.8,
+        "thermalConductivity": 167,
+        "corrosionResistance": "Good",
+        "cost": "Low",
+        "hardness": 95,
+        "meltingPoint": 600,
+        "maxServiceTemp": 150
+      },
+      "rating": 4.8,
+      "reviewCount": 32,
+      "reviews": [
+        {
+          "reviewId": "rev-201",
+          "userName": "Carlos Mendez",
+          "role": "Chassis Design Engineer",
+          "rating": 5,
+          "applicationTested": "Automotive Subframes & Control Arms",
+          "comment": "The gold standard for lightweight structural prototyping. Mills cleanly at high feeds and anodizes with great consistency.",
+          "date": "2026-06-20"
+        },
+        {
+          "reviewId": "rev-202",
+          "userName": "Priya Sharma",
+          "role": "UAV Mechanical Lead",
+          "rating": 5,
+          "applicationTested": "Drone Airframe Structural Spars",
+          "comment": "High strength-to-weight ratio for the price. Welded heat-affected zones lose temper, so design around mechanical fasteners where possible.",
+          "date": "2026-08-19"
+        },
+        {
+          "reviewId": "rev-203",
+          "userName": "Tom O'Connor",
+          "role": "Marine Hardware Specialist",
+          "rating": 4,
+          "applicationTested": "Boat Deck Mast Fittings",
+          "comment": "Great salt resistance when hard anodized. Very forgiving in CNC milling operations.",
+          "date": "2026-09-02"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Titanium Grade 2 (CP-Ti)",
+      "category": "Metal",
+      "description": "Commercially pure titanium providing biocompatibility, supreme resistance to seawater and chemical attack, and high ductility.",
+      "applications": [
+        "Biomedical & Surgical",
+        "Marine & Offshore",
+        "Chemical & Petrochemical",
+        "Aerospace & Defense"
+      ],
+      "properties": {
+        "density": 4.51,
+        "tensileStrength": 350,
+        "specificStrength": 77.6,
+        "thermalConductivity": 21.9,
+        "corrosionResistance": "Excellent",
+        "cost": "High",
+        "hardness": 250,
+        "meltingPoint": 1668,
+        "maxServiceTemp": 400
+      },
+      "rating": 4.7,
+      "reviewCount": 16,
+      "reviews": [
+        {
+          "reviewId": "rev-301",
+          "userName": "Dr. Aris Thorne",
+          "role": "Biomedical Implants R&D",
+          "rating": 5,
+          "applicationTested": "Orthopedic Bone Plates & Cranial Mesh",
+          "comment": "Unbeatable osseointegration and complete biological inertness in in-vivo environments. Low elastic modulus reduces stress shielding.",
+          "date": "2026-05-30"
+        },
+        {
+          "reviewId": "rev-302",
+          "userName": "Hannah Lindqvist",
+          "role": "Desalination Plant Engineer",
+          "rating": 5,
+          "applicationTested": "High-Pressure Brine Condensers",
+          "comment": "Zero measurable wall-loss after 3 years in hyper-saline brine at 80°C. High initial cost is offset by virtually zero maintenance downtime.",
+          "date": "2026-07-28"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Carbon Fiber Reinforced Polymer (CFRP)",
+      "category": "Composite",
+      "description": "High-modulus carbon fiber matrix composite offering extreme specific tensile strength, ultra-low density, and zero galvanic corrosion.",
+      "applications": [
+        "Aerospace & Defense",
+        "Automotive Lightweighting",
+        "Sports & Robotics",
+        "Structural & Heavy Machinery"
+      ],
+      "properties": {
+        "density": 1.55,
+        "tensileStrength": 1550,
+        "specificStrength": 1000,
+        "thermalConductivity": 5.4,
+        "corrosionResistance": "Excellent",
+        "cost": "High",
+        "hardness": 85,
+        "meltingPoint": "N/A (Thermoset)",
+        "maxServiceTemp": 180
+      },
+      "rating": 4.9,
+      "reviewCount": 28,
+      "reviews": [
+        {
+          "reviewId": "rev-401",
+          "userName": "Elena Rostova",
+          "role": "Aerospace Composite Specialist",
+          "rating": 5,
+          "applicationTested": "Commercial Airliner Wing Skins",
+          "comment": "Unmatched specific strength (1000 kN·m/kg). Superior fatigue endurance over cyclic flight loads. Requires ultrasonic inspection for internal delamination.",
+          "date": "2026-06-11"
+        },
+        {
+          "reviewId": "rev-402",
+          "userName": "Nico Bianchi",
+          "role": "Formula Motorsports Dynamics",
+          "rating": 5,
+          "applicationTested": "Monocoque Impact Survival Cell",
+          "comment": "Energy absorption during crash tests is peerless. Autoclave curing cycle must be tightly monitored for void content under 1%.",
+          "date": "2026-08-25"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Ductile Cast Iron (ASTM A536)",
+      "category": "Metal",
+      "description": "Spheroidal graphite iron with high compressive strength, superior vibration damping, wear resistance, and cost efficiency.",
+      "applications": [
+        "Automotive Lightweighting",
+        "Structural & Heavy Machinery",
+        "Industrial Pumps & Compressors"
+      ],
+      "properties": {
+        "density": 7.1,
+        "tensileStrength": 450,
+        "specificStrength": 63.4,
+        "thermalConductivity": 36,
+        "corrosionResistance": "Poor",
+        "cost": "Low",
+        "hardness": 170,
+        "meltingPoint": 1150,
+        "maxServiceTemp": 450
+      },
+      "rating": 4.3,
+      "reviewCount": 14,
+      "reviews": [
+        {
+          "reviewId": "rev-501",
+          "userName": "Walter Briggs",
+          "role": "Heavy Machinery Drivetrain Engineer",
+          "rating": 4,
+          "applicationTested": "Engine Crankcases & Gearbox Housings",
+          "comment": "Acoustic and vibration damping is dramatically better than forged steel. Requires paint or oil coating immediately to prevent flash rust.",
+          "date": "2026-04-14"
+        },
+        {
+          "reviewId": "rev-502",
+          "userName": "Vikram Patel",
+          "role": "Hydraulics Manufacturing",
+          "rating": 5,
+          "applicationTested": "High-Pressure Hydraulic Pump Manifolds",
+          "comment": "Near net-shape casting saves thousands in machining hours. Very stable under heavy cyclical pressure spikes.",
+          "date": "2026-07-09"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Oxygen-Free Copper (C10200)",
+      "category": "Metal",
+      "description": "High-purity elemental copper with elite electrical and thermal conductivity, excellent solderability, and antimicrobial properties.",
+      "applications": [
+        "Thermal Management & Heat Sinks",
+        "Electronics & Electrical",
+        "Chemical & Petrochemical"
+      ],
+      "properties": {
+        "density": 8.94,
+        "tensileStrength": 240,
+        "specificStrength": 26.8,
+        "thermalConductivity": 391,
+        "corrosionResistance": "Good",
+        "cost": "Moderate",
+        "hardness": 75,
+        "meltingPoint": 1083,
+        "maxServiceTemp": 200
+      },
+      "rating": 4.7,
+      "reviewCount": 22,
+      "reviews": [
+        {
+          "reviewId": "rev-601",
+          "userName": "Kevin Gallagher",
+          "role": "Thermal Systems Architect",
+          "rating": 5,
+          "applicationTested": "High-Flux CPU/GPU Vapor Chambers",
+          "comment": "Thermal conductivity of ~391 W/m·K resolves thermal bottlenecks effortlessly. Sintered copper powder wicks work flawlessly with water coolant.",
+          "date": "2026-06-03"
+        },
+        {
+          "reviewId": "rev-602",
+          "userName": "Leila Farhadi",
+          "role": "EV Powertrain Busbar Engineer",
+          "rating": 5,
+          "applicationTested": "800V EV Battery Pack Busbars",
+          "comment": "Negligible I2R resistive heating under 400A continuous load. Ductility makes tight bends inside tight battery enclosures simple.",
+          "date": "2026-08-30"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Tungsten Alloy (W-Ni-Fe)",
+      "category": "Metal",
+      "description": "Refractory metal with ultra-high density, extreme melting point (3422°C), high radiation shielding efficiency, and high elastic modulus.",
+      "applications": [
+        "Aerospace & Defense",
+        "High-Temperature & Turbines",
+        "Electronics & Electrical",
+        "Biomedical & Surgical"
+      ],
+      "properties": {
+        "density": 19.25,
+        "tensileStrength": 980,
+        "specificStrength": 50.9,
+        "thermalConductivity": 173,
+        "corrosionResistance": "Good",
+        "cost": "Very High",
+        "hardness": 340,
+        "meltingPoint": 3422,
+        "maxServiceTemp": 1650
+      },
+      "rating": 4.5,
+      "reviewCount": 11,
+      "reviews": [
+        {
+          "reviewId": "rev-701",
+          "userName": "Dr. Frank Vance",
+          "role": "Nuclear Shielding Specialist",
+          "rating": 5,
+          "applicationTested": "Medical Radiotherapy Collimators",
+          "comment": "Exceptional gamma-ray attenuation without the toxicity liabilities of lead. Heavy mass in a compact envelope.",
+          "date": "2026-05-18"
+        },
+        {
+          "reviewId": "rev-702",
+          "userName": "Dmitri Volkov",
+          "role": "Rocket Propulsion Engineer",
+          "rating": 4,
+          "applicationTested": "High-Temperature Rocket Nozzle Throats",
+          "comment": "Withstands extreme throat erosion at gas temperatures exceeding 2500°C. Difficult to machine, EDM is practically mandatory.",
+          "date": "2026-09-08"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Polycarbonate (Lexan)",
+      "category": "Polymer",
+      "description": "Amorphous thermoplastic offering optical transparency, extreme impact toughness (250x glass), and electrical insulation.",
+      "applications": [
+        "Automotive Lightweighting",
+        "Biomedical & Surgical",
+        "Electronics & Electrical",
+        "Consumer & Protective Equipment"
+      ],
+      "properties": {
+        "density": 1.2,
+        "tensileStrength": 68,
+        "specificStrength": 56.7,
+        "thermalConductivity": 0.2,
+        "corrosionResistance": "Excellent",
+        "cost": "Low",
+        "hardness": 70,
+        "meltingPoint": 250,
+        "maxServiceTemp": 125
+      },
+      "rating": 4.4,
+      "reviewCount": 17,
+      "reviews": [
+        {
+          "reviewId": "rev-801",
+          "userName": "Chloe Martin",
+          "role": "Safety Gear & Helmet Designer",
+          "rating": 5,
+          "applicationTested": "Ballistic Face Shields & Canopy",
+          "comment": "Incredible shatter resistance against high-speed projectile impacts. Sensitive to aromatic solvents and UV degradation without protective coating.",
+          "date": "2026-06-25"
+        },
+        {
+          "reviewId": "rev-802",
+          "userName": "Kenji Sato",
+          "role": "Consumer Electronics Enclosures",
+          "rating": 4,
+          "applicationTested": "Smart Meter Transparent Windows",
+          "comment": "Molds with high precision and dimensional stability. Great electrical dielectric breakdown resistance.",
+          "date": "2026-08-12"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Silicon Carbide (SiC)",
+      "category": "Ceramic",
+      "description": "Advanced technical ceramic combining diamond-like hardness (Mohs 9.5), high thermal conductivity, extreme wear resistance, and high-temp tolerance.",
+      "applications": [
+        "High-Temperature & Turbines",
+        "Chemical & Petrochemical",
+        "Thermal Management & Heat Sinks",
+        "Aerospace & Defense"
+      ],
+      "properties": {
+        "density": 3.21,
+        "tensileStrength": 390,
+        "specificStrength": 121.5,
+        "thermalConductivity": 120,
+        "corrosionResistance": "Excellent",
+        "cost": "High",
+        "hardness": 2800,
+        "meltingPoint": 2730,
+        "maxServiceTemp": 1600
+      },
+      "rating": 4.8,
+      "reviewCount": 15,
+      "reviews": [
+        {
+          "reviewId": "rev-901",
+          "userName": "Goran Nilsson",
+          "role": "Corrosive Slurry Pump Architect",
+          "rating": 5,
+          "applicationTested": "Mechanical Face Seals in Mining Slurry",
+          "comment": "Zero abrasive wear after 8,000 hours in quartz slurry. Thermal shock resistance is highest among technical ceramics.",
+          "date": "2026-07-19"
+        },
+        {
+          "reviewId": "rev-902",
+          "userName": "Dr. Liam Ward",
+          "role": "Semiconductor Wafer Processing",
+          "rating": 5,
+          "applicationTested": "Epitaxial Reactor Susceptors",
+          "comment": "Maintains extreme dimensional rigidity at 1200°C without gas outgassing. Outstanding chemical inertness against fluorine plasma.",
+          "date": "2026-09-10"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Inconel 718 (Nickel Superalloy)",
+      "category": "Metal",
+      "description": "Precipitation-hardenable nickel-chromium superalloy retaining exceptional yield, tensile, and creep-rupture strength up to 700°C.",
+      "applications": [
+        "Aerospace & Defense",
+        "High-Temperature & Turbines",
+        "Chemical & Petrochemical",
+        "Marine & Offshore"
+      ],
+      "properties": {
+        "density": 8.19,
+        "tensileStrength": 1280,
+        "specificStrength": 156.3,
+        "thermalConductivity": 11.4,
+        "corrosionResistance": "Excellent",
+        "cost": "Very High",
+        "hardness": 360,
+        "meltingPoint": 1336,
+        "maxServiceTemp": 704
+      },
+      "rating": 4.9,
+      "reviewCount": 25,
+      "reviews": [
+        {
+          "reviewId": "rev-1001",
+          "userName": "Captain Roger Hall",
+          "role": "Gas Turbine Propulsion Team",
+          "rating": 5,
+          "applicationTested": "Turbine Rotor Discs & Stator Blades",
+          "comment": "Unsurpassed creep resistance under high centrifugal stresses at 650°C. Resists chloride stress corrosion cracking completely.",
+          "date": "2026-06-15"
+        },
+        {
+          "reviewId": "rev-1002",
+          "userName": "Claire Duhamel",
+          "role": "Deepwater Oil & Gas Tooling",
+          "rating": 5,
+          "applicationTested": "Subsea Wellhead Completion Valves",
+          "comment": "NACE MR0175 compliant for severe sour gas (H2S + CO2) service. Tough to machine, use ceramic inserts with high-pressure coolant.",
+          "date": "2026-08-22"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Titanium Ti-6Al-4V (Grade 5)",
+      "category": "Metal",
+      "description": "Alpha-beta titanium alloy combining high mechanical strength, light weight, outstanding corrosion resistance, and aerospace heritage.",
+      "applications": [
+        "Aerospace & Defense",
+        "Biomedical & Surgical",
+        "Automotive Lightweighting",
+        "Marine & Offshore"
+      ],
+      "properties": {
+        "density": 4.43,
+        "tensileStrength": 950,
+        "specificStrength": 214.4,
+        "thermalConductivity": 6.7,
+        "corrosionResistance": "Excellent",
+        "cost": "High",
+        "hardness": 330,
+        "meltingPoint": 1660,
+        "maxServiceTemp": 400
+      },
+      "rating": 4.9,
+      "reviewCount": 31,
+      "reviews": [
+        {
+          "reviewId": "rev-1101",
+          "userName": "Lt. Col. Arthur Hayes",
+          "role": "Military Aviation Structures Lead",
+          "rating": 5,
+          "applicationTested": "Fighter Jet Bulkheads & Landing Gear",
+          "comment": "Outstanding specific strength (214 kN·m/kg) and excellent fracture toughness. Retains structural integrity in supersonic thermal regimes.",
+          "date": "2026-05-22"
+        },
+        {
+          "reviewId": "rev-1102",
+          "userName": "Dr. Rebecca Stern",
+          "role": "Orthopedic Prosthetics Surgeon & Designer",
+          "rating": 5,
+          "applicationTested": "3D Printed Trabecular Hip Stems",
+          "comment": "Electron Beam Melting (EBM) additive manufacturing yields porous scaffolds with natural bone ingrowth and zero biological rejection.",
+          "date": "2026-07-14"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Aluminum 7075-T6",
+      "category": "Metal",
+      "description": "Zinc-alloyed aircraft aluminum offering ultra-high yield strength comparable to many structural steels, paired with low density.",
+      "applications": [
+        "Aerospace & Defense",
+        "Automotive Lightweighting",
+        "Sports & Robotics"
+      ],
+      "properties": {
+        "density": 2.81,
+        "tensileStrength": 572,
+        "specificStrength": 203.6,
+        "thermalConductivity": 130,
+        "corrosionResistance": "Moderate",
+        "cost": "Moderate",
+        "hardness": 150,
+        "meltingPoint": 477,
+        "maxServiceTemp": 100
+      },
+      "rating": 4.8,
+      "reviewCount": 23,
+      "reviews": [
+        {
+          "reviewId": "rev-1201",
+          "userName": "Julian Wright",
+          "role": "Spacecraft Payload Mechanical Lead",
+          "rating": 5,
+          "applicationTested": "Satellite CubeSat Main Frames",
+          "comment": "572 MPa tensile strength at only 2.81 g/cm³ makes it the top choice for mass-critical satellite launch structures. Anodizing recommended for moisture protection.",
+          "date": "2026-06-08"
+        },
+        {
+          "reviewId": "rev-1202",
+          "userName": "Matteo Rossi",
+          "role": "Downhill Racing Chassis Builder",
+          "rating": 5,
+          "applicationTested": "High-Impact Mountain Bike Linkages",
+          "comment": "Machinability is buttery smooth and stiff. Noticeable weight savings over 6061 with 80% higher fatigue resistance.",
+          "date": "2026-08-16"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "PEEK (Polyetheretherketone)",
+      "category": "Polymer",
+      "description": "High-performance semi-crystalline engineering polymer with incredible chemical inertness, high continuous operating temp (260°C), and radiation resistance.",
+      "applications": [
+        "Biomedical & Surgical",
+        "Aerospace & Defense",
+        "Chemical & Petrochemical",
+        "Electronics & Electrical"
+      ],
+      "properties": {
+        "density": 1.32,
+        "tensileStrength": 100,
+        "specificStrength": 75.8,
+        "thermalConductivity": 0.25,
+        "corrosionResistance": "Excellent",
+        "cost": "High",
+        "hardness": 85,
+        "meltingPoint": 343,
+        "maxServiceTemp": 260
+      },
+      "rating": 4.7,
+      "reviewCount": 18,
+      "reviews": [
+        {
+          "reviewId": "rev-1301",
+          "userName": "Dr. Maya Lin",
+          "role": "Spine Surgery Device Director",
+          "rating": 5,
+          "applicationTested": "Radiolucent Spinal Fusion Cages",
+          "comment": "Radiolucent under X-ray imaging allowing clear fusion assessment. Modulus closely matches human cortical bone, eliminating stress shielding.",
+          "date": "2026-06-19"
+        },
+        {
+          "reviewId": "rev-1302",
+          "userName": "Andre Dupuis",
+          "role": "Aerospace Systems Lead",
+          "rating": 4,
+          "applicationTested": "Unlubricated Bushings in Cabin Air Systems",
+          "comment": "Self-lubricating wear resistance even dry. Extremely low smoke and toxic gas emissions in FAA FAR 25.853 flammability testing.",
+          "date": "2026-09-01"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "Silicon Nitride (Si3N4)",
+      "category": "Ceramic",
+      "description": "Ultra-tough structural ceramic offering the highest fracture toughness among advanced ceramics, low friction coefficient, and high thermal shock resistance.",
+      "applications": [
+        "High-Temperature & Turbines",
+        "Aerospace & Defense",
+        "Automotive Lightweighting",
+        "Biomedical & Surgical"
+      ],
+      "properties": {
+        "density": 3.2,
+        "tensileStrength": 750,
+        "specificStrength": 234.4,
+        "thermalConductivity": 30,
+        "corrosionResistance": "Excellent",
+        "cost": "Very High",
+        "hardness": 1700,
+        "meltingPoint": 1900,
+        "maxServiceTemp": 1200
+      },
+      "rating": 4.8,
+      "reviewCount": 14,
+      "reviews": [
+        {
+          "reviewId": "rev-1401",
+          "userName": "Lars Enevoldsen",
+          "role": "Wind Turbine Bearing Specialist",
+          "rating": 5,
+          "applicationTested": "Hybrid Ceramic Wind Turbine Bearings",
+          "comment": "Non-conductive ceramic balls prevent electrical fluting erosion caused by stray shaft currents. Bearing service life increased by 400%.",
+          "date": "2026-05-11"
+        },
+        {
+          "reviewId": "rev-1402",
+          "userName": "Tanya Gomez",
+          "role": "Turbocharger Development Team",
+          "rating": 5,
+          "applicationTested": "High-RPM Ceramic Turbocharger Rotors",
+          "comment": "Low rotational inertia compared to nickel alloys reduces turbo lag by 35%. Excellent resistance to thermal cracking.",
+          "date": "2026-07-25"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "Magnesium Alloy AZ31B",
+      "category": "Metal",
+      "description": "Ultralight structural metal (33% lighter than aluminum) providing high vibration damping capacity and excellent electromagnetic shielding.",
+      "applications": [
+        "Automotive Lightweighting",
+        "Electronics & Electrical",
+        "Aerospace & Defense"
+      ],
+      "properties": {
+        "density": 1.77,
+        "tensileStrength": 260,
+        "specificStrength": 146.9,
+        "thermalConductivity": 96,
+        "corrosionResistance": "Moderate",
+        "cost": "Moderate",
+        "hardness": 73,
+        "meltingPoint": 630,
+        "maxServiceTemp": 150
+      },
+      "rating": 4.5,
+      "reviewCount": 16,
+      "reviews": [
+        {
+          "reviewId": "rev-1501",
+          "userName": "Siddharth Nair",
+          "role": "Laptop Chassis Hardware Engineer",
+          "rating": 5,
+          "applicationTested": "Ultrathin Laptop Structural Bottom Case",
+          "comment": "Density of 1.77 g/cm³ allows rigid unibody structures under 800 grams. EMI shielding is built-in without secondary conductive sprays.",
+          "date": "2026-06-30"
+        },
+        {
+          "reviewId": "rev-1502",
+          "userName": "Jonas Richter",
+          "role": "Automotive Seat Structures Lead",
+          "rating": 4,
+          "applicationTested": "Die-Cast Seat Backrest Frames",
+          "comment": "Superb vibration absorption improves passenger comfort. Galvanic isolation required at steel bolt contact points to prevent galvanic corrosion.",
+          "date": "2026-08-28"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Free-Cutting Brass C36000",
+      "category": "Metal",
+      "description": "The industry benchmark for machinability (100% rating) with natural corrosion resistance, excellent electrical conductivity, and aesthetic golden finish.",
+      "applications": [
+        "Electronics & Electrical",
+        "Marine & Offshore",
+        "Structural & Heavy Machinery",
+        "Chemical & Petrochemical"
+      ],
+      "properties": {
+        "density": 8.5,
+        "tensileStrength": 390,
+        "specificStrength": 45.9,
+        "thermalConductivity": 115,
+        "corrosionResistance": "Good",
+        "cost": "Moderate",
+        "hardness": 140,
+        "meltingPoint": 900,
+        "maxServiceTemp": 200
+      },
+      "rating": 4.6,
+      "reviewCount": 20,
+      "reviews": [
+        {
+          "reviewId": "rev-1601",
+          "userName": "Bill Henderson",
+          "role": "Precision CNC Swiss Lathe Operator",
+          "rating": 5,
+          "applicationTested": "Threaded Hydraulic & Pneumatic Fittings",
+          "comment": "Zero tool wear even after 50,000 cycle runs. Small broken chips clear automatically without tangled stringy ribbons. Clean tight threads every time.",
+          "date": "2026-06-14"
+        },
+        {
+          "reviewId": "rev-1602",
+          "userName": "Camilla Soares",
+          "role": "Instrumentation Valve Engineer",
+          "rating": 4,
+          "applicationTested": "Marine Instrument Compression Bushings",
+          "comment": "Natural lubricity prevents thread galling when mated to stainless steel valve bodies. Reliable seal under 3000 PSI gas pressure.",
+          "date": "2026-08-11"
+        }
+      ]
+    }
+  ]
+}

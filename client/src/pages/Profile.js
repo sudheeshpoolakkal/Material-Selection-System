@@ -364,6 +364,7 @@ const Profile = () => {
         </div>
         <div style={styles.nav}>
           <Link to="/dashboard" style={styles.navLink}>Dashboard</Link>
+          <Link to="/materials" style={styles.navLink}>Materials</Link>
           <Link to="/profile" style={{ ...styles.navLink, ...styles.navLinkActive }}>Profile</Link>
           <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
         </div>

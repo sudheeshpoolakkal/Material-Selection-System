@@ -1,4 +1,4 @@
-﻿// src/App.js
+// src/App.js
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
+import Materials from './pages/Materials';
 
 // Redirect logged-in users away from public pages (login / register)
 const PublicRoute = ({ children }) => {
@@ -33,6 +34,7 @@ function App() {
 
           {/* Protected */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/materials" element={<ProtectedRoute><Materials /></ProtectedRoute>} />
           <Route path="/profile"   element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
           {/* Default: unauthenticated → /login, authenticated → /dashboard */}
