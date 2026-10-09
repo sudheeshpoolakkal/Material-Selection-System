@@ -394,6 +394,7 @@ const Dashboard = () => {
   // Modals
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  const [newProjectApplication, setNewProjectApplication] = useState('Aerospace & Defense');
   const [newMaxWeight, setNewMaxWeight] = useState('');
   const [newTargetCost, setNewTargetCost] = useState('');
 
@@ -446,6 +447,7 @@ const Dashboard = () => {
         '/api/projects',
         {
           name: newProjectName.trim(),
+          application: newProjectApplication,
           max_weight: newMaxWeight,
           target_cost: newTargetCost,
         },
@@ -453,6 +455,7 @@ const Dashboard = () => {
       );
 
       setNewProjectName('');
+      setNewProjectApplication('Aerospace & Defense');
       setNewMaxWeight('');
       setNewTargetCost('');
       setShowCreateModal(false);
@@ -595,6 +598,7 @@ const Dashboard = () => {
         </div>
         <div style={styles.nav}>
           <Link to="/dashboard" style={{ ...styles.navLink, ...styles.navLinkActive }}>Dashboard</Link>
+          <Link to="/materials" style={styles.navLink}>Materials</Link>
           <Link to="/profile" style={styles.navLink}>Profile</Link>
           <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
         </div>
@@ -615,9 +619,24 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          <button onClick={() => setShowCreateModal(true)} style={styles.newProjectBtn}>
-            <span>＋</span> Create Project
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <Link
+              to="/materials"
+              style={{
+                ...styles.newProjectBtn,
+                background: '#ffffff',
+                color: '#1a73e8',
+                border: '1.5px solid #bfdbfe',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+                textDecoration: 'none',
+              }}
+            >
+              <span>🔍</span> Explore Materials
+            </Link>
+            <button onClick={() => setShowCreateModal(true)} style={styles.newProjectBtn}>
+              <span>＋</span> Create Project
+            </button>
+          </div>
         </div>
 
         {/* Live Metrics Grid */}
@@ -708,6 +727,20 @@ const Dashboard = () => {
                         <div style={styles.projectMeta}>
                           Created by: {p.owner_name || p.owner_email}
                         </div>
+                        <div style={{ marginTop: '0.4rem' }}>
+                          <span style={{
+                            display: 'inline-block',
+                            background: '#eff6ff',
+                            color: '#1d4ed8',
+                            border: '1px solid #bfdbfe',
+                            borderRadius: '6px',
+                            fontSize: '0.74rem',
+                            fontWeight: '700',
+                            padding: '0.2rem 0.55rem'
+                          }}>
+                            🎯 {p.application || 'General Mechanical'}
+                          </span>
+                        </div>
                       </div>
                       <span style={{ ...styles.badge, ...rolePill, margin: 0 }}>
                         {isOwner ? 'Owner' : `Collab: ${p.user_role}`}
@@ -731,6 +764,23 @@ const Dashboard = () => {
 
                   {/* Actions Bar */}
                   <div style={styles.cardActions}>
+                    <Link
+                      to={`/materials?application=${encodeURIComponent(p.application || 'All')}`}
+                      style={{
+                        ...styles.actionBtn,
+                        background: '#eff6ff',
+                        color: '#1d4ed8',
+                        borderColor: '#bfdbfe',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '0.25rem'
+                      }}
+                      title="Find candidate materials for this application"
+                    >
+                      🔍 Materials
+                    </Link>
                     <button
                       onClick={() => handleOpenSpecs(p)}
                       style={{ ...styles.actionBtn, ...styles.actionBtnPrimary }}
@@ -782,6 +832,26 @@ const Dashboard = () => {
                 required
                 autoFocus
               />
+
+              <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.4rem', fontSize: '0.88rem' }}>
+                Target Engineering Application Domain *
+              </label>
+              <select
+                style={{ ...styles.input, cursor: 'pointer' }}
+                value={newProjectApplication}
+                onChange={(e) => setNewProjectApplication(e.target.value)}
+              >
+                <option value="Aerospace & Defense">🚀 Aerospace & Defense</option>
+                <option value="Automotive Lightweighting">🏎️ Automotive Lightweighting</option>
+                <option value="Marine & Offshore">🚢 Marine & Offshore</option>
+                <option value="Thermal Management & Heat Sinks">❄️ Thermal Management & Heat Sinks</option>
+                <option value="Biomedical & Surgical">🩺 Biomedical & Surgical</option>
+                <option value="Chemical & Petrochemical">🧪 Chemical & Petrochemical</option>
+                <option value="Electronics & Electrical">⚡ Electronics & Electrical</option>
+                <option value="High-Temperature & Turbines">🔥 High-Temperature & Turbines</option>
+                <option value="Structural & Heavy Machinery">🏗️ Structural & Heavy Machinery</option>
+                <option value="General Mechanical">⚙️ General Mechanical</option>
+              </select>
 
               <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '10px', marginBottom: '1.2rem', border: '1px solid #e2e8f0' }}>
                 <div style={{ fontWeight: '600', fontSize: '0.88rem', color: '#0f172a', marginBottom: '0.3rem' }}>

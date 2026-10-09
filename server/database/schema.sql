@@ -14,6 +14,7 @@ CREATE TABLE Projects (
     project_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     owner_id INT NOT NULL,
+    application VARCHAR(255) DEFAULT 'General Mechanical',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (owner_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
@@ -35,3 +36,14 @@ CREATE TABLE Material_Specs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE CASCADE
 );
+
+CREATE TABLE Material_Reviews (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    material_id INT NOT NULL,
+    user_name VARCHAR(255) NOT NULL,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    application_tested VARCHAR(255) DEFAULT '',
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
