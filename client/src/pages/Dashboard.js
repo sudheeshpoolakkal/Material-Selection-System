@@ -1,1088 +1,559 @@
-// pages/Dashboard.js
-import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { AuthContext } from '../context/AuthContext';
-
-const roleBadgeColor = {
-  admin: { background: '#ef4444', color: '#ffffff' },
-  developer: { background: '#3b82f6', color: '#ffffff' },
-  viewer: { background: '#10b981', color: '#ffffff' },
-  owner: { background: '#8b5cf6', color: '#ffffff' },
-  read: { background: '#64748b', color: '#ffffff' },
-  write: { background: '#0284c7', color: '#ffffff' },
-};
-
-const styles = {
-  page: {
-    minHeight: '100vh',
-    background: '#f8fafc',
-    padding: '2rem 1.5rem',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    color: '#0f172a',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '2rem',
-    maxWidth: '1200px',
-    margin: '0 auto 2rem',
-  },
-  brand: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-  },
-  brandIcon: {
-    width: '42px',
-    height: '42px',
-    borderRadius: '12px',
-    background: 'linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%)',
-    color: '#ffffff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '1.3rem',
-    fontWeight: 'bold',
-  },
-  title: {
-    margin: 0,
-    color: '#0f172a',
-    fontSize: '1.4rem',
-    fontWeight: '700',
-  },
-  nav: {
-    display: 'flex',
-    gap: '1rem',
-    alignItems: 'center',
-  },
-  navLink: {
-    textDecoration: 'none',
-    color: '#64748b',
-    fontWeight: '600',
-    fontSize: '0.92rem',
-    padding: '0.45rem 0.75rem',
-    borderRadius: '8px',
-  },
-  navLinkActive: {
-    color: '#1a73e8',
-    background: '#eff6ff',
-  },
-  logoutBtn: {
-    padding: '0.45rem 1rem',
-    background: '#fee2e2',
-    color: '#dc2626',
-    border: '1px solid #fecaca',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontWeight: '600',
-    fontSize: '0.9rem',
-  },
-  main: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-  },
-  welcomeCard: {
-    background: '#ffffff',
-    borderRadius: '16px',
-    padding: '1.6rem 2rem',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
-    border: '1px solid #e2e8f0',
-    marginBottom: '1.75rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  welcomeLeft: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1.25rem',
-  },
-  avatar: {
-    width: '56px',
-    height: '56px',
-    borderRadius: '50%',
-    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-    color: '#fff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '1.5rem',
-    fontWeight: '700',
-  },
-  badge: {
-    display: 'inline-block',
-    padding: '0.25rem 0.7rem',
-    borderRadius: '999px',
-    fontSize: '0.75rem',
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    marginLeft: '0.6rem',
-  },
-  newProjectBtn: {
-    padding: '0.75rem 1.4rem',
-    background: 'linear-gradient(135deg, #1a73e8 0%, #1557b0 100%)',
-    color: '#ffffff',
-    border: 'none',
-    borderRadius: '10px',
-    fontSize: '0.95rem',
-    fontWeight: '600',
-    cursor: 'pointer',
-    boxShadow: '0 4px 14px rgba(26, 115, 232, 0.3)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-  },
-  statsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-    gap: '1.25rem',
-    marginBottom: '2rem',
-  },
-  statCard: {
-    background: '#ffffff',
-    borderRadius: '14px',
-    padding: '1.5rem',
-    boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
-    border: '1px solid #e2e8f0',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  statLabel: {
-    color: '#64748b',
-    fontSize: '0.88rem',
-    fontWeight: '600',
-  },
-  statNumber: {
-    fontSize: '2.2rem',
-    fontWeight: '800',
-    color: '#0f172a',
-    margin: '0.5rem 0 0.2rem',
-  },
-  statSub: {
-    fontSize: '0.8rem',
-    color: '#94a3b8',
-  },
-  controlsRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '1.25rem',
-    gap: '1rem',
-    flexWrap: 'wrap',
-  },
-  searchBar: {
-    padding: '0.65rem 1rem',
-    border: '1.5px solid #e2e8f0',
-    borderRadius: '10px',
-    fontSize: '0.92rem',
-    width: '280px',
-    outline: 'none',
-    background: '#ffffff',
-  },
-  filterPills: {
-    display: 'flex',
-    gap: '0.5rem',
-  },
-  pill: {
-    padding: '0.45rem 0.9rem',
-    borderRadius: '8px',
-    border: '1px solid #e2e8f0',
-    background: '#ffffff',
-    color: '#64748b',
-    fontSize: '0.85rem',
-    fontWeight: '600',
-    cursor: 'pointer',
-  },
-  pillActive: {
-    background: '#eff6ff',
-    borderColor: '#93c5fd',
-    color: '#1a73e8',
-  },
-  projectsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-    gap: '1.5rem',
-  },
-  projectCard: {
-    background: '#ffffff',
-    borderRadius: '16px',
-    padding: '1.6rem',
-    boxShadow: '0 4px 18px rgba(0,0,0,0.04)',
-    border: '1px solid #e2e8f0',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-  },
-  cardTop: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: '1rem',
-  },
-  projectName: {
-    margin: '0 0 0.25rem',
-    fontSize: '1.2rem',
-    fontWeight: '700',
-    color: '#0f172a',
-  },
-  projectMeta: {
-    fontSize: '0.82rem',
-    color: '#64748b',
-  },
-  specsSection: {
-    background: '#f8fafc',
-    borderRadius: '10px',
-    padding: '0.9rem 1rem',
-    margin: '1rem 0',
-    border: '1px solid #edf2f7',
-  },
-  specItem: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontSize: '0.85rem',
-    marginBottom: '0.35rem',
-  },
-  cardActions: {
-    display: 'flex',
-    gap: '0.6rem',
-    marginTop: '1rem',
-    borderTop: '1px solid #f1f5f9',
-    paddingTop: '1rem',
-  },
-  actionBtn: {
-    flex: 1,
-    padding: '0.55rem',
-    borderRadius: '8px',
-    border: '1px solid #e2e8f0',
-    background: '#ffffff',
-    color: '#334155',
-    fontWeight: '600',
-    fontSize: '0.84rem',
-    cursor: 'pointer',
-    textAlign: 'center',
-    transition: 'all 0.15s',
-  },
-  actionBtnPrimary: {
-    background: '#eff6ff',
-    borderColor: '#bfdbfe',
-    color: '#1a73e8',
-  },
-  actionBtnDelete: {
-    flex: 'none',
-    padding: '0.55rem 0.75rem',
-    background: '#fff',
-    borderColor: '#fecaca',
-    color: '#dc2626',
-  },
-  emptyState: {
-    background: '#ffffff',
-    borderRadius: '16px',
-    padding: '4rem 2rem',
-    textAlign: 'center',
-    border: '2px dashed #e2e8f0',
-    maxWidth: '520px',
-    margin: '2rem auto',
-  },
-  emptyIcon: {
-    fontSize: '3rem',
-    marginBottom: '1rem',
-  },
-  // Modal styles
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'rgba(15, 23, 42, 0.6)',
-    backdropFilter: 'blur(4px)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000,
-    padding: '1rem',
-  },
-  modalContent: {
-    background: '#ffffff',
-    borderRadius: '20px',
-    padding: '2.2rem',
-    maxWidth: '540px',
-    width: '100%',
-    maxHeight: '90vh',
-    overflowY: 'auto',
-    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-  },
-  modalHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '1.5rem',
-  },
-  modalTitle: {
-    margin: 0,
-    fontSize: '1.3rem',
-    fontWeight: '700',
-    color: '#0f172a',
-  },
-  closeBtn: {
-    background: 'none',
-    border: 'none',
-    fontSize: '1.5rem',
-    cursor: 'pointer',
-    color: '#64748b',
-  },
-  input: {
-    width: '100%',
-    padding: '0.75rem 1rem',
-    border: '1.5px solid #e2e8f0',
-    borderRadius: '8px',
-    fontSize: '0.95rem',
-    boxSizing: 'border-box',
-    outline: 'none',
-    marginBottom: '1rem',
-  },
-  modalSubmitBtn: {
-    width: '100%',
-    padding: '0.85rem',
-    background: 'linear-gradient(135deg, #1a73e8 0%, #1557b0 100%)',
-    color: '#ffffff',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '1rem',
-    fontWeight: '600',
-    cursor: 'pointer',
-    marginTop: '0.5rem',
-  },
-  specRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '0.75rem',
-    borderRadius: '8px',
-    background: '#f8fafc',
-    marginBottom: '0.5rem',
-    border: '1px solid #e2e8f0',
-  },
-  collabRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '0.75rem',
-    borderRadius: '8px',
-    background: '#f8fafc',
-    marginBottom: '0.5rem',
-    border: '1px solid #e2e8f0',
-  },
-};
-
-const Dashboard = () => {
-  const { user, token, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  // State
-  const [stats, setStats] = useState({ totalProjects: 0, ownedProjects: 0, collaborations: 0, totalSpecs: 0 });
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('all'); // all, owned, shared
-
-  // Modals
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newProjectName, setNewProjectName] = useState('');
-  const [newProjectApplication, setNewProjectApplication] = useState('Aerospace & Defense');
-  const [newMaxWeight, setNewMaxWeight] = useState('');
-  const [newTargetCost, setNewTargetCost] = useState('');
-
-  // Specs Modal
-  const [activeProjectForSpecs, setActiveProjectForSpecs] = useState(null);
-  const [specWeight, setSpecWeight] = useState('');
-  const [specCost, setSpecCost] = useState('');
-
-  // Collaborators Modal
-  const [activeProjectForCollabs, setActiveProjectForCollabs] = useState(null);
-  const [collabEmail, setCollabEmail] = useState('');
-  const [collabPerm, setCollabPerm] = useState('read');
-  const [collabMsg, setCollabMsg] = useState('');
-
-  // Fetch Data
-  const fetchData = useCallback(async () => {
-    if (!token) return;
+import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
+import { useWorkspace } from "../context/WorkspaceContext";
+import Icon from "../components/Icon";
+import { Modal, Empty, Field, ErrorMessage } from "../components/UI";
+const date = (v) =>
+  new Date(
+    v.replace(" ", "T") + (v.includes("Z") ? "" : "Z"),
+  ).toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+export default function Dashboard() {
+  const { token, user } = useContext(AuthContext);
+  const { setNotice } = useWorkspace();
+  const [projects, setProjects] = useState([]),
+    [loading, setLoading] = useState(true),
+    [error, setError] = useState(""),
+    [query, setQuery] = useState(""),
+    [filter, setFilter] = useState("all"),
+    [modal, setModal] = useState(null),
+    [name, setName] = useState(""),
+    [application, setApplication] = useState("General Mechanical"),
+    [busy, setBusy] = useState(false),
+    [modalError, setModalError] = useState(""),
+    [project, setProject] = useState(null),
+    [email, setEmail] = useState(""),
+    [permission, setPermission] = useState("read"),
+    [weight, setWeight] = useState(""),
+    [cost, setCost] = useState("");
+  const config = { headers: { Authorization: `Bearer ${token}` } };
+  async function load() {
+    setError("");
     try {
-      setLoading(true);
-      const headers = { Authorization: `Bearer ${token}` };
-      const [statsRes, projRes] = await Promise.all([
-        axios.get('/api/projects/stats', { headers }),
-        axios.get('/api/projects', { headers }),
-      ]);
-      setStats(statsRes.data);
-      setProjects(projRes.data);
-    } catch (err) {
-      console.error('Error fetching dashboard data:', err);
+      const { data } = await axios.get("/api/projects", config);
+      setProjects(data);
+    } catch (e) {
+      setError(e.response?.data?.message || "Unable to load projects.");
     } finally {
       setLoading(false);
     }
-  }, [token]);
-
+  }
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  // Create Project
-  const handleCreateProject = async (e) => {
+    if (token) load();
+    else setLoading(false);
+  }, [token]);
+  function open(kind, p) {
+    setModal(kind);
+    setModalError("");
+    setName(p?.name || "");
+    setApplication(p?.application || "General Mechanical");
+    setProject(p || null);
+    setEmail("");
+    setWeight("");
+    setCost("");
+    if (kind === "team" || kind === "specs") details(p.project_id);
+  }
+  async function details(id) {
+    try {
+      const { data } = await axios.get(`/api/projects/${id}`, config);
+      setProject(data);
+    } catch {
+      setModalError("Could not load project details.");
+    }
+  }
+  async function submit(e) {
     e.preventDefault();
-    if (!newProjectName.trim()) return;
-
+    setBusy(true);
+    setModalError("");
     try {
-      await axios.post(
-        '/api/projects',
-        {
-          name: newProjectName.trim(),
-          application: newProjectApplication,
-          max_weight: newMaxWeight,
-          target_cost: newTargetCost,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
+      if (modal === "create") {
+        await axios.post("/api/projects", { name, application }, config);
+        setNotice(
+          "Project created. Open its selection studio to define requirements.",
+        );
+      } else if (modal === "rename") {
+        await axios.put(
+          `/api/projects/${project.project_id}`,
+          { name },
+          config,
+        );
+        setNotice("Project renamed.");
+      } else if (modal === "delete") {
+        await axios.delete(`/api/projects/${project.project_id}`, config);
+        setNotice("Project deleted.");
+      } else if (modal === "team") {
+        await axios.post(
+          `/api/projects/${project.project_id}/collaborators`,
+          { email, permission_level: permission },
+          config,
+        );
+        setEmail("");
+        await details(project.project_id);
+        await load();
+        setNotice("Project access updated.");
+        return;
+      } else if (modal === "specs") {
+        await axios.post(
+          `/api/projects/${project.project_id}/specs`,
+          { max_weight: weight, target_cost: cost },
+          config,
+        );
+        setWeight("");
+        setCost("");
+        await details(project.project_id);
+        await load();
+        return;
+      }
+      setModal(null);
+      await load();
+    } catch (e) {
+      setModalError(
+        e.response?.data?.message || "Could not complete this action.",
       );
-
-      setNewProjectName('');
-      setNewProjectApplication('Aerospace & Defense');
-      setNewMaxWeight('');
-      setNewTargetCost('');
-      setShowCreateModal(false);
-      fetchData();
-    } catch (err) {
-      alert(err.response?.data?.message || 'Error creating project');
+    } finally {
+      setBusy(false);
     }
-  };
-
-  // Delete Project
-  const handleDeleteProject = async (projectId) => {
-    if (!window.confirm('Are you sure you want to permanently delete this project and its material specs?')) {
-      return;
-    }
-    try {
-      await axios.delete(`/api/projects/${projectId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      fetchData();
-    } catch (err) {
-      alert(err.response?.data?.message || 'Error deleting project');
-    }
-  };
-
-  // Open Specs Modal
-  const handleOpenSpecs = async (project) => {
-    try {
-      const res = await axios.get(`/api/projects/${project.project_id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setActiveProjectForSpecs(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Add Spec inside Modal
-  const handleAddSpec = async (e) => {
-    e.preventDefault();
-    if (!activeProjectForSpecs) return;
-
-    try {
-      await axios.post(
-        `/api/projects/${activeProjectForSpecs.project_id}/specs`,
-        { max_weight: specWeight, target_cost: specCost },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setSpecWeight('');
-      setSpecCost('');
-      handleOpenSpecs(activeProjectForSpecs); // reload specs modal
-      fetchData(); // refresh dashboard stats
-    } catch (err) {
-      alert(err.response?.data?.message || 'Error adding material spec');
-    }
-  };
-
-  // Delete Spec
-  const handleDeleteSpec = async (specId) => {
-    try {
-      await axios.delete(`/api/projects/${activeProjectForSpecs.project_id}/specs/${specId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      handleOpenSpecs(activeProjectForSpecs);
-      fetchData();
-    } catch (err) {
-      alert(err.response?.data?.message || 'Error removing spec');
-    }
-  };
-
-  // Open Collaborators Modal
-  const handleOpenCollabs = async (project) => {
-    try {
-      const res = await axios.get(`/api/projects/${project.project_id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setActiveProjectForCollabs(res.data);
-      setCollabMsg('');
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Add Collaborator
-  const handleAddCollaborator = async (e) => {
-    e.preventDefault();
-    if (!activeProjectForCollabs || !collabEmail.trim()) return;
-
-    try {
-      const res = await axios.post(
-        `/api/projects/${activeProjectForCollabs.project_id}/collaborators`,
-        { email: collabEmail.trim(), permission_level: collabPerm },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setCollabMsg(res.data.message || 'Collaborator added!');
-      setCollabEmail('');
-      handleOpenCollabs(activeProjectForCollabs);
-      fetchData();
-    } catch (err) {
-      setCollabMsg(err.response?.data?.message || 'Failed to add collaborator');
-    }
-  };
-
-  // Remove Collaborator
-  const handleRemoveCollaborator = async (userId) => {
+  }
+  async function remove(type, id) {
+    setBusy(true);
     try {
       await axios.delete(
-        `/api/projects/${activeProjectForCollabs.project_id}/collaborators/${userId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        `/api/projects/${project.project_id}/${type}/${id}`,
+        config,
       );
-      handleOpenCollabs(activeProjectForCollabs);
-      fetchData();
-    } catch (err) {
-      alert(err.response?.data?.message || 'Error removing collaborator');
+      await details(project.project_id);
+      await load();
+    } catch (e) {
+      setModalError(e.response?.data?.message || "Could not remove this item.");
+    } finally {
+      setBusy(false);
     }
-  };
-
-  // Filter projects
-  const filteredProjects = projects.filter((p) => {
-    const matchesSearch =
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.owner_email.toLowerCase().includes(search.toLowerCase());
-
-    if (!matchesSearch) return false;
-    if (filter === 'owned') return p.user_role === 'owner';
-    if (filter === 'shared') return p.user_role !== 'owner';
-    return true;
-  });
-
-  const displayName = user?.name || user?.email?.split('@')[0] || 'User';
-  const initial = displayName.charAt(0).toUpperCase();
-  const roleStyle = roleBadgeColor[user?.role] || roleBadgeColor.viewer;
-
-  return (
-    <div style={styles.page}>
-      {/* Top Header */}
-      <div style={styles.header}>
-        <div style={styles.brand}>
-          <div style={styles.brandIcon}>⚙️</div>
-          <h1 style={styles.title}>Material Optimization DBMS</h1>
-        </div>
-        <div style={styles.nav}>
-          <Link to="/dashboard" style={{ ...styles.navLink, ...styles.navLinkActive }}>Dashboard</Link>
-          <Link to="/materials" style={styles.navLink}>Materials</Link>
-          <Link to="/profile" style={styles.navLink}>Profile</Link>
-          <button onClick={handleLogout} style={styles.logoutBtn}>Logout</button>
-        </div>
-      </div>
-
-      <div style={styles.main}>
-        {/* Welcome Card with New Project CTA */}
-        <div style={styles.welcomeCard}>
-          <div style={styles.welcomeLeft}>
-            <div style={styles.avatar}>{initial}</div>
-            <div>
-              <div style={{ fontSize: '1.25rem', fontWeight: '700', color: '#0f172a' }}>
-                Welcome, {displayName}!
-                <span style={{ ...styles.badge, ...roleStyle }}>{user?.role}</span>
-              </div>
-              <div style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.2rem' }}>
-                Material design optimization & project collaboration workspace
-              </div>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <Link
-              to="/materials"
-              style={{
-                ...styles.newProjectBtn,
-                background: '#ffffff',
-                color: '#1a73e8',
-                border: '1.5px solid #bfdbfe',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
-                textDecoration: 'none',
-              }}
-            >
-              <span>🔍</span> Explore Materials
-            </Link>
-            <button onClick={() => setShowCreateModal(true)} style={styles.newProjectBtn}>
-              <span>＋</span> Create Project
-            </button>
-          </div>
-        </div>
-
-        {/* Live Metrics Grid */}
-        <div style={styles.statsGrid}>
-          <div style={styles.statCard}>
-            <div style={styles.statLabel}>Total Accessible Projects</div>
-            <div style={styles.statNumber}>{stats.totalProjects}</div>
-            <div style={styles.statSub}>Owned & Collaborating</div>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statLabel}>Projects Owned</div>
-            <div style={styles.statNumber}>{stats.ownedProjects}</div>
-            <div style={styles.statSub}>Created by your account</div>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statLabel}>Shared Collaborations</div>
-            <div style={styles.statNumber}>{stats.collaborations}</div>
-            <div style={styles.statSub}>Shared projects with team</div>
-          </div>
-          <div style={styles.statCard}>
-            <div style={styles.statLabel}>Material Specs Defined</div>
-            <div style={{ ...styles.statNumber, color: '#1a73e8' }}>{stats.totalSpecs}</div>
-            <div style={styles.statSub}>Weight & Cost constraint specs</div>
-          </div>
-        </div>
-
-        {/* Filter and Search Bar */}
-        <div style={styles.controlsRow}>
-          <input
-            type="text"
-            style={styles.searchBar}
-            placeholder="Search projects by name or owner..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div style={styles.filterPills}>
-            <button
-              style={{ ...styles.pill, ...(filter === 'all' ? styles.pillActive : {}) }}
-              onClick={() => setFilter('all')}
-            >
-              All ({projects.length})
-            </button>
-            <button
-              style={{ ...styles.pill, ...(filter === 'owned' ? styles.pillActive : {}) }}
-              onClick={() => setFilter('owned')}
-            >
-              My Projects ({stats.ownedProjects})
-            </button>
-            <button
-              style={{ ...styles.pill, ...(filter === 'shared' ? styles.pillActive : {}) }}
-              onClick={() => setFilter('shared')}
-            >
-              Shared with Me ({stats.collaborations})
-            </button>
-          </div>
-        </div>
-
-        {/* Projects Cards View */}
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '3rem', color: '#64748b' }}>
-            Loading optimization projects...
-          </div>
-        ) : filteredProjects.length === 0 ? (
-          <div style={styles.emptyState}>
-            <div style={styles.emptyIcon}>📂</div>
-            <h3 style={{ margin: '0 0 0.5rem', color: '#0f172a' }}>No projects found</h3>
-            <p style={{ color: '#64748b', fontSize: '0.92rem', marginBottom: '1.5rem' }}>
-              {search || filter !== 'all'
-                ? 'Try adjusting your search criteria or filters.'
-                : 'Get started by creating your first material optimization project.'}
+  }
+  const shown = projects.filter(
+    (p) =>
+      (filter === "all" ||
+        (filter === "owned"
+          ? p.user_role === "owner"
+          : p.user_role !== "owner")) &&
+      `${p.name} ${p.application} ${p.owner_name}`
+        .toLowerCase()
+        .includes(query.toLowerCase()),
+  );
+  if (!token)
+    return (
+      <div className="page">
+        <div className="page-heading">
+          <div>
+            
+            <h1>
+              Projects
+              <span className="heading-period">.</span>
+            </h1>
+            <p>
+              Keep requirements, recommendations, and your team in one place.
             </p>
-            <button onClick={() => setShowCreateModal(true)} style={styles.newProjectBtn}>
-              <span>＋</span> Create Your First Project
-            </button>
           </div>
-        ) : (
-          <div style={styles.projectsGrid}>
-            {filteredProjects.map((p) => {
-              const isOwner = p.user_role === 'owner';
-              const rolePill = isOwner ? roleBadgeColor.owner : roleBadgeColor[p.user_role] || roleBadgeColor.read;
-
-              return (
-                <div key={p.project_id} style={styles.projectCard}>
-                  <div>
-                    <div style={styles.cardTop}>
-                      <div>
-                        <h3 style={styles.projectName}>{p.name}</h3>
-                        <div style={styles.projectMeta}>
-                          Created by: {p.owner_name || p.owner_email}
-                        </div>
-                        <div style={{ marginTop: '0.4rem' }}>
-                          <span style={{
-                            display: 'inline-block',
-                            background: '#eff6ff',
-                            color: '#1d4ed8',
-                            border: '1px solid #bfdbfe',
-                            borderRadius: '6px',
-                            fontSize: '0.74rem',
-                            fontWeight: '700',
-                            padding: '0.2rem 0.55rem'
-                          }}>
-                            🎯 {p.application || 'General Mechanical'}
-                          </span>
-                        </div>
-                      </div>
-                      <span style={{ ...styles.badge, ...rolePill, margin: 0 }}>
-                        {isOwner ? 'Owner' : `Collab: ${p.user_role}`}
-                      </span>
-                    </div>
-
-                    {/* Material Specs Snippet */}
-                    <div style={styles.specsSection}>
-                      <div style={styles.specItem}>
-                        <span style={{ color: '#64748b', fontWeight: '500' }}>Specifications:</span>
-                        <span style={{ fontWeight: '700', color: '#1a73e8' }}>
-                          {p.specs_count} {p.specs_count === 1 ? 'spec' : 'specs'} defined
-                        </span>
-                      </div>
-                      <div style={styles.specItem}>
-                        <span style={{ color: '#64748b', fontWeight: '500' }}>Collaborators:</span>
-                        <span style={{ fontWeight: '600' }}>{p.collaborators_count} members</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Actions Bar */}
-                  <div style={styles.cardActions}>
-                    <Link
-                      to={`/materials?application=${encodeURIComponent(p.application || 'All')}`}
-                      style={{
-                        ...styles.actionBtn,
-                        background: '#eff6ff',
-                        color: '#1d4ed8',
-                        borderColor: '#bfdbfe',
-                        textDecoration: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.25rem'
-                      }}
-                      title="Find candidate materials for this application"
-                    >
-                      🔍 Materials
-                    </Link>
-                    <button
-                      onClick={() => handleOpenSpecs(p)}
-                      style={{ ...styles.actionBtn, ...styles.actionBtnPrimary }}
-                    >
-                      ⚙️ Specs ({p.specs_count})
-                    </button>
-                    <button
-                      onClick={() => handleOpenCollabs(p)}
-                      style={styles.actionBtn}
-                    >
-                      👥 Team ({p.collaborators_count})
-                    </button>
-                    {isOwner && (
-                      <button
-                        onClick={() => handleDeleteProject(p.project_id)}
-                        style={{ ...styles.actionBtn, ...styles.actionBtnDelete }}
-                        title="Delete project"
-                      >
-                        🗑️
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        </div>
+        <Empty
+          title="Keep your selections together."
+          description="Sign in to create projects, save your selection results, and collaborate with your team."
+        >
+          <Link to="/login?next=/dashboard" className="button">
+            Sign in
+            <Icon name="arrow" />
+          </Link>
+          <Link to="/register?next=/dashboard" className="text-button">
+            Create an account
+          </Link>
+        </Empty>
       </div>
-
-      {/* CREATE PROJECT MODAL */}
-      {showCreateModal && (
-        <div style={styles.modalOverlay} onClick={() => setShowCreateModal(false)}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <h3 style={styles.modalTitle}>Create New Project</h3>
-              <button style={styles.closeBtn} onClick={() => setShowCreateModal(false)}>✕</button>
-            </div>
-
-            <form onSubmit={handleCreateProject}>
-              <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.4rem', fontSize: '0.88rem' }}>
-                Project Name *
-              </label>
-              <input
-                type="text"
-                style={styles.input}
-                value={newProjectName}
-                onChange={(e) => setNewProjectName(e.target.value)}
-                placeholder="e.g. Carbon-Fiber Chassis Optimization"
-                required
-                autoFocus
-              />
-
-              <label style={{ display: 'block', fontWeight: '600', marginBottom: '0.4rem', fontSize: '0.88rem' }}>
-                Target Engineering Application Domain *
-              </label>
-              <select
-                style={{ ...styles.input, cursor: 'pointer' }}
-                value={newProjectApplication}
-                onChange={(e) => setNewProjectApplication(e.target.value)}
+    );
+  return (
+    <div className="page projects-page">
+      <div className="page-heading">
+        <div>
+          
+          <h1>
+            Projects<span className="heading-period">.</span>
+          </h1>
+          <p>
+            {user.name ? `${user.name.split(" ")[0]}, keep` : "Keep"} your
+            projects moving from requirements to decisions.
+          </p>
+        </div>
+        <button className="button" onClick={() => open("create")}>
+          <Icon name="plus" />
+          New project
+        </button>
+      </div>
+      <div className="project-stats">
+        {[
+          [projects.length, "Accessible projects"],
+          [
+            projects.filter((p) => p.user_role === "owner").length,
+            "Owned by you",
+          ],
+          [
+            projects.filter((p) => p.user_role !== "owner").length,
+            "Shared with you",
+          ],
+          [
+            projects.reduce((n, p) => n + Number(p.specs_count), 0),
+            "Legacy specifications",
+          ],
+        ].map(([v, k]) => (
+          <div key={k}>
+            <span>{k}</span>
+            <strong>{String(v).padStart(2, "0")}</strong>
+          </div>
+        ))}
+      </div>
+      <div className="section-heading">
+        <div>
+          
+          <h2>My projects</h2>
+        </div>
+        <div className="segmented">
+          {[
+            ["all", "All projects"],
+            ["owned", "Owned"],
+            ["shared", "Shared"],
+          ].map(([v, label]) => (
+            <button
+              key={v}
+              className={filter === v ? "active" : ""}
+              onClick={() => setFilter(v)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="search-input project-search">
+        <Icon name="search" />
+        <input
+          aria-label="Search projects"
+          placeholder="Search your projects…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+      </div>
+      <ErrorMessage message={error} />
+      {error && (
+        <button className="button button-secondary" onClick={load}>
+          Retry
+        </button>
+      )}
+      {loading ? (
+        <div className="skeleton-card" />
+      ) : !shown.length ? (
+        <Empty
+          title={
+            projects.length
+              ? "No matching projects"
+              : "Your next idea belongs here."
+          }
+          description={
+            projects.length
+              ? "Try a different search or filter."
+              : "Create your first project and turn requirements into an informed material shortlist."
+          }
+        >
+          <button className="button" onClick={() => open("create")}>
+            <Icon name="plus" />
+            Create a project
+          </button>
+        </Empty>
+      ) : (
+        <div className="project-grid">
+          {shown.map((p, i) => (
+            <article className="project-card" key={p.project_id}>
+              <div className="project-card-top">
+                <span className="project-glyph">
+                  <Icon name="projects" size={24} />
+                </span>
+                <span className="project-role">
+                  {p.user_role === "owner"
+                    ? "Owned by you"
+                    : `${p.user_role} access`}
+                </span>
+              </div>
+              <span className="eyebrow">
+                PROJECT {String(i + 1).padStart(2, "0")}
+              </span>
+              <Link
+                className="project-title"
+                to={`/selection?project=${p.project_id}`}
               >
-                <option value="Aerospace & Defense">🚀 Aerospace & Defense</option>
-                <option value="Automotive Lightweighting">🏎️ Automotive Lightweighting</option>
-                <option value="Marine & Offshore">🚢 Marine & Offshore</option>
-                <option value="Thermal Management & Heat Sinks">❄️ Thermal Management & Heat Sinks</option>
-                <option value="Biomedical & Surgical">🩺 Biomedical & Surgical</option>
-                <option value="Chemical & Petrochemical">🧪 Chemical & Petrochemical</option>
-                <option value="Electronics & Electrical">⚡ Electronics & Electrical</option>
-                <option value="High-Temperature & Turbines">🔥 High-Temperature & Turbines</option>
-                <option value="Structural & Heavy Machinery">🏗️ Structural & Heavy Machinery</option>
-                <option value="General Mechanical">⚙️ General Mechanical</option>
-              </select>
-
-              <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '10px', marginBottom: '1.2rem', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontWeight: '600', fontSize: '0.88rem', color: '#0f172a', marginBottom: '0.3rem' }}>
-                  Initial Material Specification (Optional)
-                </div>
-                <div style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '0.8rem' }}>
-                  You can set target weight and cost constraints now, or add multiple specs later.
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', marginBottom: '0.3rem' }}>
-                      Max Weight (kg)
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      style={{ ...styles.input, marginBottom: 0 }}
-                      value={newMaxWeight}
-                      onChange={(e) => setNewMaxWeight(e.target.value)}
-                      placeholder="e.g. 250.0"
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', marginBottom: '0.3rem' }}>
-                      Target Cost ($)
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      style={{ ...styles.input, marginBottom: 0 }}
-                      value={newTargetCost}
-                      onChange={(e) => setNewTargetCost(e.target.value)}
-                      placeholder="e.g. 15000.0"
-                    />
-                  </div>
-                </div>
+                {p.name}
+                <Icon name="arrowUp" size={18} />
+              </Link>
+              <p>{p.application}</p>
+              <div className="project-owner">
+                <span className="mini-avatar">
+                  {(p.owner_name || p.owner_email)[0].toUpperCase()}
+                </span>
+                <span>
+                  {p.owner_name || p.owner_email}
+                  <small>Created {date(p.created_at)}</small>
+                </span>
               </div>
-
-              <button type="submit" style={styles.modalSubmitBtn}>
-                Create Project
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* MATERIAL SPECS MODAL */}
-      {activeProjectForSpecs && (
-        <div style={styles.modalOverlay} onClick={() => setActiveProjectForSpecs(null)}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <div>
-                <h3 style={styles.modalTitle}>{activeProjectForSpecs.name}</h3>
-                <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Material Specifications</span>
-              </div>
-              <button style={styles.closeBtn} onClick={() => setActiveProjectForSpecs(null)}>✕</button>
-            </div>
-
-            {/* List of Specs */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ fontWeight: '600', fontSize: '0.88rem', marginBottom: '0.6rem' }}>
-                Defined Constraints ({activeProjectForSpecs.specs?.length || 0})
-              </div>
-
-              {(!activeProjectForSpecs.specs || activeProjectForSpecs.specs.length === 0) ? (
-                <div style={{ padding: '1.5rem', textAlign: 'center', background: '#f8fafc', borderRadius: '8px', color: '#64748b', fontSize: '0.9rem' }}>
-                  No specifications defined yet for this project.
-                </div>
-              ) : (
-                activeProjectForSpecs.specs.map((spec) => (
-                  <div key={spec.spec_id} style={styles.specRow}>
-                    <div>
-                      <div style={{ fontWeight: '700', fontSize: '0.95rem' }}>
-                        ⚖️ Max: {spec.max_weight} kg &nbsp;|&nbsp; 💵 Target: ${spec.target_cost}
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                        Spec #{spec.spec_id} &bull; Added {new Date(spec.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                    {activeProjectForSpecs.can_write && (
-                      <button
-                        onClick={() => handleDeleteSpec(spec.spec_id)}
-                        style={{ ...styles.actionBtn, ...styles.actionBtnDelete, padding: '0.3rem 0.6rem' }}
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Add Spec Form */}
-            {activeProjectForSpecs.can_write && (
-              <form onSubmit={handleAddSpec} style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1.2rem' }}>
-                <div style={{ fontWeight: '600', fontSize: '0.9rem', marginBottom: '0.8rem' }}>
-                  ＋ Add New Material Specification
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginBottom: '0.8rem' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', marginBottom: '0.3rem' }}>
-                      Max Weight (kg) *
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      style={{ ...styles.input, marginBottom: 0 }}
-                      placeholder="e.g. 320.5"
-                      value={specWeight}
-                      onChange={(e) => setSpecWeight(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', marginBottom: '0.3rem' }}>
-                      Target Cost ($) *
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      style={{ ...styles.input, marginBottom: 0 }}
-                      placeholder="e.g. 8500.0"
-                      value={specCost}
-                      onChange={(e) => setSpecCost(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-                <button type="submit" style={styles.modalSubmitBtn}>
-                  Save Specification
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* COLLABORATORS MODAL */}
-      {activeProjectForCollabs && (
-        <div style={styles.modalOverlay} onClick={() => setActiveProjectForCollabs(null)}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <div style={styles.modalHeader}>
-              <div>
-                <h3 style={styles.modalTitle}>{activeProjectForCollabs.name}</h3>
-                <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Project Team & Permissions</span>
-              </div>
-              <button style={styles.closeBtn} onClick={() => setActiveProjectForCollabs(null)}>✕</button>
-            </div>
-
-            {collabMsg && (
-              <div style={{ padding: '0.65rem', borderRadius: '8px', background: '#eff6ff', color: '#1e40af', marginBottom: '1rem', fontSize: '0.85rem' }}>
-                {collabMsg}
-              </div>
-            )}
-
-            {/* List Collaborators */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ fontWeight: '600', fontSize: '0.88rem', marginBottom: '0.6rem' }}>
-                Collaborators ({activeProjectForCollabs.collaborators?.length || 0})
-              </div>
-
-              {(!activeProjectForCollabs.collaborators || activeProjectForCollabs.collaborators.length === 0) ? (
-                <div style={{ padding: '1.5rem', textAlign: 'center', background: '#f8fafc', borderRadius: '8px', color: '#64748b', fontSize: '0.9rem' }}>
-                  No external collaborators added yet.
-                </div>
-              ) : (
-                activeProjectForCollabs.collaborators.map((collab) => (
-                  <div key={collab.user_id} style={styles.collabRow}>
-                    <div>
-                      <div style={{ fontWeight: '600', fontSize: '0.92rem' }}>
-                        {collab.name || collab.email}
-                      </div>
-                      <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
-                        {collab.email} &bull; <strong style={{ textTransform: 'capitalize' }}>{collab.permission_level}</strong>
-                      </div>
-                    </div>
-                    {activeProjectForCollabs.user_role === 'owner' && (
-                      <button
-                        onClick={() => handleRemoveCollaborator(collab.user_id)}
-                        style={{ ...styles.actionBtn, ...styles.actionBtnDelete, padding: '0.3rem 0.6rem' }}
-                      >
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Add Collaborator Form (Owner only) */}
-            {activeProjectForCollabs.user_role === 'owner' && (
-              <form onSubmit={handleAddCollaborator} style={{ borderTop: '1px solid #e2e8f0', paddingTop: '1.2rem' }}>
-                <div style={{ fontWeight: '600', fontSize: '0.9rem', marginBottom: '0.8rem' }}>
-                  ＋ Add Team Collaborator
-                </div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', marginBottom: '0.3rem' }}>
-                  User Email Address *
-                </label>
-                <input
-                  type="email"
-                  style={styles.input}
-                  placeholder="collaborator@company.com"
-                  value={collabEmail}
-                  onChange={(e) => setCollabEmail(e.target.value)}
-                  required
-                />
-
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: '600', marginBottom: '0.3rem' }}>
-                  Permission Level
-                </label>
-                <select
-                  style={{ ...styles.input, background: '#fff', cursor: 'pointer' }}
-                  value={collabPerm}
-                  onChange={(e) => setCollabPerm(e.target.value)}
+              <div className="project-card-actions">
+                <Link
+                  className="button button-secondary button-sm"
+                  to={`/selection?project=${p.project_id}`}
                 >
-                  <option value="read">Read Only (View Specs)</option>
-                  <option value="write">Write (Add/Delete Specs)</option>
-                  <option value="admin">Admin (Full Project Management)</option>
-                </select>
-
-                <button type="submit" style={styles.modalSubmitBtn}>
-                  Assign Collaborator
+                  Open selection
+                  <Icon name="arrow" size={15} />
+                </Link>
+                <button
+                  className="icon-button"
+                  onClick={() => open("team", p)}
+                  aria-label={`Team for ${p.name}`}
+                  title="Project team"
+                >
+                  <Icon name="user" />
                 </button>
-              </form>
-            )}
-          </div>
+                <button
+                  className="icon-button"
+                  onClick={() => open("specs", p)}
+                  aria-label={`Legacy specifications for ${p.name}`}
+                  title="Legacy specifications"
+                >
+                  <Icon name="list" />
+                </button>
+                <button
+                  className="icon-button"
+                  disabled={!["owner", "write", "admin"].includes(p.user_role)}
+                  onClick={() => open("rename", p)}
+                  aria-label={`Rename ${p.name}`}
+                  title="Rename project"
+                >
+                  <Icon name="sliders" />
+                </button>
+                {p.user_role === "owner" && (
+                  <button
+                    className="icon-button"
+                    onClick={() => open("delete", p)}
+                    aria-label={`Delete ${p.name}`}
+                    title="Delete project"
+                  >
+                    <Icon name="trash" size={17} />
+                  </button>
+                )}
+              </div>
+            </article>
+          ))}
         </div>
+      )}
+      {modal && (
+        <Modal
+          title={
+            {
+              create: "Create a project",
+              rename: "Rename project",
+              delete: "Delete project?",
+              team: "Project team",
+              specs: "Legacy specifications",
+            }[modal]
+          }
+          subtitle={
+            project?.name || "Give your next engineering idea a place to grow."
+          }
+          onClose={() => setModal(null)}
+        >
+          <form onSubmit={submit} className="modal-body">
+            <ErrorMessage message={modalError} />
+            {(modal === "create" || modal === "rename") && (
+              <>
+                <Field label="Project name">
+                  <input
+                    autoFocus
+                    required
+                    maxLength="255"
+                    placeholder="e.g. Lightweight UAV airframe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </Field>
+                {modal === "create" && (
+                  <Field label="Application / design context">
+                    <input
+                      required
+                      value={application}
+                      maxLength="255"
+                      onChange={(e) => setApplication(e.target.value)}
+                    />
+                  </Field>
+                )}
+                <button className="button full-width" disabled={busy}>
+                  {busy
+                    ? "Saving…"
+                    : modal === "create"
+                      ? "Create project"
+                      : "Save name"}
+                  <Icon name="arrow" />
+                </button>
+              </>
+            )}
+            {modal === "delete" && (
+              <>
+                <p className="muted">
+                  This permanently removes the project, its requirements, saved
+                  recommendations, specifications, and collaborator access.
+                </p>
+                <div className="modal-footer inline-footer">
+                  <button
+                    type="button"
+                    className="button button-secondary"
+                    onClick={() => setModal(null)}
+                  >
+                    Keep project
+                  </button>
+                  <button className="button button-danger" disabled={busy}>
+                    Delete project
+                  </button>
+                </div>
+              </>
+            )}
+            {modal === "team" && (
+              <>
+                <p className="muted small">
+                  Invite an existing registered account. Read can inspect, write
+                  can edit requirements, and admin can edit. The owner manages
+                  team access.
+                </p>
+                <div className="member-row">
+                  <span className="avatar">
+                    {(user.name || user.email)[0].toUpperCase()}
+                  </span>
+                  <span>
+                    {project?.owner_name || "Project owner"}
+                    <small>Owner</small>
+                  </span>
+                </div>
+                {project?.collaborators?.map((c) => (
+                  <div className="member-row" key={c.user_id}>
+                    <span className="mini-avatar">
+                      {(c.name || c.email)[0].toUpperCase()}
+                    </span>
+                    <span>
+                      {c.name || c.email}
+                      <small>
+                        {c.email} · {c.permission_level}
+                      </small>
+                    </span>
+                    {project.user_role === "owner" && (
+                      <button
+                        type="button"
+                        className="icon-button"
+                        disabled={busy}
+                        onClick={() => remove("collaborators", c.user_id)}
+                        aria-label={`Remove ${c.email}`}
+                      >
+                        <Icon name="close" size={16} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                {project?.user_role === "owner" && (
+                  <>
+                    <Field label="Registered email address">
+                      <input
+                        type="email"
+                        required
+                        placeholder="teammate@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </Field>
+                    <Field label="Permission">
+                      <select
+                        value={permission}
+                        onChange={(e) => setPermission(e.target.value)}
+                      >
+                        <option value="read">Read — inspect selections</option>
+                        <option value="write">Write — edit selections</option>
+                        <option value="admin">Admin — edit project</option>
+                      </select>
+                    </Field>
+                    <button className="button full-width" disabled={busy}>
+                      Add or update collaborator
+                      <Icon name="plus" />
+                    </button>
+                  </>
+                )}
+              </>
+            )}
+            {modal === "specs" && (
+              <>
+                <p className="muted small">
+                  These mass and USD budget records are preserved from the
+                  original project. Use the selection studio for property-based
+                  screening; supplier pricing is not in this catalog.
+                </p>
+                {project?.specs?.map((s) => (
+                  <div className="legacy-spec" key={s.spec_id}>
+                    <span>
+                      Max mass<strong>{s.max_weight} kg</strong>
+                    </span>
+                    <span>
+                      Budget
+                      <strong>${Number(s.target_cost).toLocaleString()}</strong>
+                    </span>
+                    {project.can_write && (
+                      <button
+                        className="icon-button"
+                        type="button"
+                        disabled={busy}
+                        onClick={() => remove("specs", s.spec_id)}
+                        aria-label="Remove legacy specification"
+                      >
+                        <Icon name="close" size={15} />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                {project?.can_write && (
+                  <>
+                    <div className="form-row">
+                      <Field label="Mass limit (kg)">
+                        <input
+                          required
+                          type="number"
+                          min="0.001"
+                          step="any"
+                          value={weight}
+                          onChange={(e) => setWeight(e.target.value)}
+                        />
+                      </Field>
+                      <Field label="Budget (USD)">
+                        <input
+                          required
+                          type="number"
+                          min="0.01"
+                          step="any"
+                          value={cost}
+                          onChange={(e) => setCost(e.target.value)}
+                        />
+                      </Field>
+                    </div>
+                    <button className="button full-width" disabled={busy}>
+                      Add legacy specification
+                      <Icon name="plus" />
+                    </button>
+                  </>
+                )}
+              </>
+            )}
+          </form>
+        </Modal>
       )}
     </div>
   );
-};
-
-export default Dashboard;
+}

@@ -1,60 +1,72 @@
-import React, { createContext, useState, useEffect } from 'react';
-
-// Create the Context
+import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
 export const AuthContext = createContext();
-
-// Provider Component
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // Load user token from localStorage on initial render
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null),
+    [token, setToken] = useState(null),
+    [loading, setLoading] = useState(true);
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-
-    if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error('Failed to parse user session:', e);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-      }
+    let active = true;
+    const stored = localStorage.getItem("token");
+    if (!stored) {
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+    axios
+      .get("/api/auth/me", { headers: { Authorization: `Bearer ${stored}` } })
+      .then(({ data }) => {
+        if (!active) return;
+        setToken(stored);
+        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
+      })
+      .catch((e) => {
+        if (e.response?.status === 401 || e.response?.status === 404) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+        }
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
-
-  // Login function
-  const login = (jwtToken, userData) => {
-    localStorage.setItem('token', jwtToken);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setToken(jwtToken);
-    setUser(userData);
+  const login = (t, u) => {
+    localStorage.setItem("token", t);
+    localStorage.setItem("user", JSON.stringify(u));
+    setToken(t);
+    setUser(u);
   };
-
-  // Update user profile function (without logging out)
-  const updateUser = (updatedFields) => {
+  const updateUser = (u) =>
     setUser((prev) => {
-      const next = { ...prev, ...updatedFields };
-      localStorage.setItem('user', JSON.stringify(next));
+      const next = { ...prev, ...u };
+      localStorage.setItem("user", JSON.stringify(next));
       return next;
     });
-  };
-
-  // Logout function
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };
-
   return (
-    <AuthContext.Provider value={{ user, token, login, updateUser, logout, loading }}>
-      {!loading && children}
+    <AuthContext.Provider
+      value={{ user, token, loading, login, updateUser, logout }}
+    >
+      {loading ? (
+        <div className="loading-screen">
+          <span className="brand-symbol">
+            <i />
+            <i />
+            <i />
+          </span>
+          <p>Opening your workspace…</p>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
-};
+}
