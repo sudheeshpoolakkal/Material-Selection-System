@@ -1,14 +1,29 @@
 {
   "name": "material-selection-system",
   "version": "1.0.0",
-  "description": "Material Selection System with Node.js/Express backend and frontend search interface",
+  "description": "Starbase engineering material selection workspace",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node scripts/dev.js",
+    "build": "npm run build --prefix client",
+    "test": "node --test server/tests/*.test.js",
+    "setup": "npm ci --prefix server && npm ci --prefix client",
+    "db:start": "node scripts/mysql-local.js",
+    "data:download": "python3 server/scripts/prepare-sources.py",
+    "data:import": "node server/scripts/import-catalog.js server/data/downloads/nist-elastic.json && node server/scripts/import-catalog.js server/data/downloads/mpea.json",
+    "data:manufacturers": "python3 server/scripts/prepare-manufacturers.py && node server/scripts/import-catalog.js server/data/downloads/manufacturers/core.json && node server/scripts/import-catalog.js server/data/downloads/manufacturers/supra.json && node server/scripts/import-catalog.js server/data/downloads/manufacturers/forta.json",
+    "data:prepare-export": "python3 server/scripts/prepare-export.py",
+    "data:registry:prepare": "python3 server/scripts/prepare-material-registry.py",
+    "data:registry": "python3 server/scripts/prepare-material-registry.py && node server/scripts/import-catalog.js server/data/downloads/material-registry/catalog.json",
+    "data:open:acquire": "python3 server/scripts/acquire-open-sources.py",
+    "data:open:prepare": ".runtime/data-tools/bin/python server/scripts/prepare-open-sources.py",
+    "test:open-data": ".runtime/data-tools/bin/python server/tests/open-sources.test.py"
   },
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=22.13"
   }
-
 }
