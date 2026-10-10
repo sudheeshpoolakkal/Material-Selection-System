@@ -1,0 +1,156 @@
+{
+  "sources": [
+    {
+      "key": "nasa-outgassing",
+      "name": "NASA Goddard vacuum outgassing tests",
+      "url": "https://data.nasa.gov/docs/legacy/Outgassing_Db/Outgassing_Db_rows.json",
+      "license": "Public domain (NASA snapshot metadata)",
+      "kind": "experimental",
+      "version": "Legacy Socrata snapshot; rows dated 2015",
+      "checksum": "54338a86e1b50976a629fab54b0370b968493f57527fcf1e00f37a80ce1bd0db",
+      "note": "NASA-published ASTM E595 vacuum outgassing observations. TML, CVCM and WVR are mass percentages, not mechanical properties. Duplicate sample IDs remain separate using original row accessions. Cure, usage and manufacturer codes are retained. The legacy snapshot is not a claim of live/current qualification.",
+      "records": 12859,
+      "normalizedSha256": "313e26bff0bc354dd778597a829ca1b5e9b3613586292dcec9e34fcddef2d65b",
+      "coverage": {
+        "collectedVolatileCondensableMaterial": 12853,
+        "totalMassLoss": 12858,
+        "waterVaporRegained": 10047
+      }
+    },
+    {
+      "key": "aflow-ael-agl",
+      "name": "AFLOW elastic and thermal calculations",
+      "url": "https://aflow.org/API/aflux/",
+      "license": "AFLOW: scientific, academic and non-commercial use only",
+      "kind": "computed",
+      "version": "AFLUX snapshot 2026-10-10",
+      "checksum": "13a223cdd3f87c049c763dbc98d6094ecda6ecd37ee18a60edd72b1a8f189fab",
+      "note": "Complete union of accessible AEL Voigt bulk modulus and AGL 300 K conductivity queries. Duplicate AUIDs are one record. Calculated elastic properties are not tensile strengths. Conductivity is the AGL model at 300 K; Voigt and VRH moduli remain separate. AFLOW source terms restrict use to scientific, academic and non-commercial purposes. Cite AFLOW/AEL/AGL papers linked by the source schema.",
+      "records": 5664,
+      "normalizedSha256": "b64497ca37af34439c0a9611df319a1c1267d59e7272fb3373340b715ad4205a",
+      "coverage": {
+        "bandGap": 5589,
+        "bulkModulus": 5639,
+        "bulkModulusVRH": 5639,
+        "density": 5664,
+        "formationEnergy": 1437,
+        "shearModulus": 5639,
+        "shearModulusVRH": 5639,
+        "thermalConductivity": 5653,
+        "youngModulus": 5639
+      }
+    },
+    {
+      "url": "https://doi.org/10.1063/1.4812323",
+      "kind": "computed",
+      "version": "2026-09-28",
+      "checksum": "be5496ee686581a2b2051872ec19084c0be3b61745fce75a6f0961f1c689b872",
+      "note": "Materials Project public S3 summary and elasticity snapshot. Density, band gap, formation energy and moduli are calculated crystal properties, not measured commercial grades. Deprecated records are retained in the original snapshot but excluded from screening. Voigt and Voigt–Reuss–Hill moduli remain separate; property origins and source version are retained. Data normalized from original Parquet files. Cite Jain et al., APL Materials 1, 011002 (2013).",
+      "key": "materials-project-core",
+      "name": "Materials Project core crystal properties",
+      "license": "CC BY 4.0",
+      "records": 154377,
+      "coverage": {
+        "density": 154377,
+        "bandGap": 154373,
+        "formationEnergy": 154373,
+        "bulkModulus": 10982,
+        "shearModulus": 10982,
+        "bulkModulusVRH": 10982,
+        "shearModulusVRH": 10982,
+        "poissonRatio": 10982
+      },
+      "normalizedSha256": "391b686b7a798f497197beecc2ff2ca2c7e460aff459d8424df2e81b14de5f44",
+      "files": [
+        {
+          "url": "https://materialsproject-build.s3.amazonaws.com/collections/summary/version=2026-09-28/part-00000-2cc5f2cc-2a79-4051-b013-2f9dec6a302e-c000.zstd.parquet",
+          "version": "version=2026-09-28"
+        },
+        {
+          "url": "https://materialsproject-build.s3.amazonaws.com/collections/elasticity/version=2026-09-28/part-00000-05658061-4aba-4c90-8e2d-59b0527141f1-c000.zstd.parquet",
+          "version": "version=2026-09-28"
+        }
+      ],
+      "excludedDeprecatedRecords": 8834
+    },
+    {
+      "url": "https://doi.org/10.1063/1.4812323",
+      "kind": "computed",
+      "version": "2026-09-28",
+      "checksum": "be5496ee686581a2b2051872ec19084c0be3b61745fce75a6f0961f1c689b872",
+      "note": "Materials Project public S3 summary and elasticity snapshot. Density, band gap, formation energy and moduli are calculated crystal properties, not measured commercial grades. Deprecated records are retained in the original snapshot but excluded from screening. Voigt and Voigt–Reuss–Hill moduli remain separate; property origins and source version are retained. Data normalized from original Parquet files. Cite Jain et al., APL Materials 1, 011002 (2013). GNoME-originated structures carry the separate non-commercial license.",
+      "key": "materials-project-gnome",
+      "name": "Materials Project GNoME crystal properties",
+      "license": "CC BY-NC 4.0 (GNoME); non-commercial use only",
+      "records": 116948,
+      "coverage": {
+        "density": 116948,
+        "bandGap": 116948,
+        "formationEnergy": 116948,
+        "bulkModulus": 3,
+        "shearModulus": 3,
+        "bulkModulusVRH": 3,
+        "shearModulusVRH": 3,
+        "poissonRatio": 3
+      },
+      "normalizedSha256": "ea9c81a913bf30862de42f0d881cf0c3b19406649fa513a581a23c35c403a460",
+      "files": [
+        {
+          "url": "https://materialsproject-build.s3.amazonaws.com/collections/summary/version=2026-09-28/part-00000-2cc5f2cc-2a79-4051-b013-2f9dec6a302e-c000.zstd.parquet",
+          "version": "version=2026-09-28"
+        },
+        {
+          "url": "https://materialsproject-build.s3.amazonaws.com/collections/elasticity/version=2026-09-28/part-00000-05658061-4aba-4c90-8e2d-59b0527141f1-c000.zstd.parquet",
+          "version": "version=2026-09-28"
+        }
+      ],
+      "excludedDeprecatedRecords": 8834
+    },
+    {
+      "key": "nomad-elastic",
+      "name": "NOMAD published elastic calculations",
+      "url": "https://nomad-lab.eu/prod/v1/api/v1/entries/query",
+      "license": "CC BY 4.0 (verified per published entry)",
+      "kind": "computed",
+      "version": "Public bulk/shear modulus query 2026-10-10",
+      "checksum": "b0c7990905bd8cf7cc3a8a725e61d0ca87f7d6ca21c3b4b32088f0994fa68782",
+      "note": "Complete public query for records tagged with bulk_modulus or shear_modulus. Original SI pressure units are converted to GPa; Voigt and VRH values remain separate. Source entries are calculation observations, not distinct commercial grades. Per-entry publication state, license, datasets and calculation methods were checked and retained. This is the mechanical-property subset, not the full multi-million-entry NOMAD archive.",
+      "records": 120,
+      "normalizedSha256": "762a3b5ff3f5c07a3079d9c56f91fc66f985b37585df1ce9305a07811a07e277",
+      "coverage": {
+        "bulkModulus": 116,
+        "bulkModulusVRH": 116,
+        "shearModulus": 112,
+        "shearModulusVRH": 109
+      }
+    },
+    {
+      "key": "nasa-tpsx",
+      "name": "NASA TPSX thermal protection materials",
+      "url": "https://tpsx.arc.nasa.gov/",
+      "license": "NASA TPSX reference data; underlying contributor rights retained",
+      "kind": "literature-extracted",
+      "version": "Public SI standard-condition snapshot 2026-10-10",
+      "checksum": "bd9b00734ad3d16d861edb2ae601ee222967d90cbdb1b8c77a639ef7af26e6e0",
+      "note": "NASA TPSX public material reference tables, including NASA and contributing databases. Standard-condition values retain source basis, uncertainty and STP annotations; original property pages link temperature curves and references. Isotropic and directional quantities remain separate. Unsupported source fields remain visible in original-property details. No blanket open-data license is claimed for industry-contributed data.",
+      "records": 1545,
+      "normalizedSha256": "7cc622cf4df5a342a77acf88faf6eb5ce04e0e2c4d53f948c12f83389808e4a7",
+      "coverage": {
+        "density": 1448,
+        "emissivity": 114,
+        "meltingPoint": 18,
+        "poissonRatio": 5,
+        "reusableTemperatureLimit": 33,
+        "singleUseTemperatureLimit": 64,
+        "specificHeat": 1412,
+        "tensileStrength": 55,
+        "thermalConductivity": 1386,
+        "thermalConductivityInPlane": 81,
+        "thermalConductivityThroughThickness": 95,
+        "thermalExpansionCoefficient": 25,
+        "yieldStrength": 7,
+        "youngModulus": 53
+      }
+    }
+  ]
+}

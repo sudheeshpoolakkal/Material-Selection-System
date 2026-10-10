@@ -1,0 +1,209 @@
+{
+  "checkedOn": "2026-10-10",
+  "scope": "Acquisition and project integration ledger. Imported counts describe observations, not complete engineering-grade specifications.",
+  "sources": [
+    {
+      "key": "nasa-tpsx",
+      "name": "NASA TPSX",
+      "url": "https://tpsx.arc.nasa.gov/",
+      "observedRecords": 1549,
+      "advertisedProperties": 150,
+      "access": "Public material list endpoint and material HTML pages; bulk export labeled Coming Soon",
+      "licenseStatus": "No dataset-wide reuse license verified; preserve NASA/industry database identity and original property references",
+      "probe": {
+        "listRoute": "https://tpsx.arc.nasa.gov/database/",
+        "protocol": "Legacy DataTables server-side GET parameters",
+        "sampleUrl": "https://tpsx.arc.nasa.gov/Material?id=1547",
+        "sampleProperties": {
+          "density_kg_m3": 288,
+          "thermalConductivityThroughThickness_W_mK": 0.107,
+          "thermalConductivityInPlane_W_mK": 0.199,
+          "specificHeat_J_kgK": 967
+        },
+        "sampleEvidence": "Measured values with uncertainties and a cited thermophysical report; density conditions marked assumed"
+      },
+      "acquisitionStatus": "imported_partial",
+      "importedRecords": 1545,
+      "acquisitionResult": "All 1,549 list records acquired; 1,545 detail pages imported. Four detail endpoints repeatedly return HTTP 500 (1519, 773, 1051, 1258)."
+    },
+    {
+      "key": "nasa-outgassing",
+      "name": "NASA Goddard Outgassing",
+      "url": "https://etd.gsfc.nasa.gov/capabilities/outgassing-database/",
+      "downloadUrl": "https://data.nasa.gov/docs/legacy/Outgassing_Db/Outgassing_Db_rows.json",
+      "records": 12859,
+      "licenseId": "PUBLIC_DOMAIN",
+      "sha256": "54338a86e1b50976a629fab54b0370b968493f57527fcf1e00f37a80ce1bd0db",
+      "bytes": 2944719,
+      "sourceSnapshot": "Legacy tenth compilation; catalog updated 2025, embedded rows timestamp 2015. Not claimed to be the current live database.",
+      "columns": [
+        "sample_material",
+        "id",
+        "mfr",
+        "tml",
+        "category",
+        "cvcm",
+        "space_code",
+        "wvr",
+        "material_usage",
+        "cure"
+      ],
+      "coverage": {
+        "tml": 12858,
+        "cvcm": 12853,
+        "wvr": 10047
+      },
+      "uniqueSampleIds": 12848,
+      "uniqueMaterialNames": 10797,
+      "access": "Complete JSON downloaded and parsed; all rows have the declared 18 columns",
+      "adapterRequirements": "Add outgassing property definitions/constraints and retain cure, manufacturer, source sample/row IDs; sample ID alone is not unique. Do not invent mechanical properties.",
+      "acquisitionStatus": "imported",
+      "importedRecords": 12859,
+      "acquisitionResult": "Complete legacy NASA JSON snapshot; vacuum properties, conditions and selection limits implemented."
+    },
+    {
+      "key": "nist-cryogenic",
+      "name": "NIST Cryogenic Materials Properties",
+      "url": "https://trc.nist.gov/cryogenics/materials/materialproperties.htm",
+      "listedSolidEntries": 42,
+      "access": "Public HTML coefficient tables; regenerator spreadsheet additionally linked",
+      "properties": [
+        "thermal conductivity",
+        "specific heat",
+        "Young modulus",
+        "thermal expansion"
+      ],
+      "licenseStatus": "Free reference access verified; specific republication terms not verified",
+      "sampleUrl": "https://trc.nist.gov/cryogenics/materials/6061%20Aluminum/6061_T6Aluminum_rev.htm",
+      "adapterRequirements": "Store correlations, applicable temperature ranges, fit errors and references. Evaluate only within ranges. Linear expansion is not the same quantity as expansion coefficient.",
+      "acquisitionStatus": "blocked_access",
+      "importedRecords": 0,
+      "acquisitionResult": "Direct index and material requests return HTTP 403, error code 1010. No correlation values imported."
+    },
+    {
+      "key": "nist-alloy-data",
+      "name": "NIST Alloy Data",
+      "url": "https://trc.nist.gov/MetalsAlloyUI/",
+      "access": "Public application found; downloadable schema/API not probed in this audit",
+      "properties": "Experimental thermophysical metal/alloy data with original publication provenance and uncertainty",
+      "licenseStatus": "Dataset/service reuse terms require source-specific verification",
+      "acquisitionStatus": "blocked_access",
+      "importedRecords": 0,
+      "acquisitionResult": "Public application request returns HTTP 403. No bulk dataset retrieved."
+    },
+    {
+      "key": "nist-jarvis-full",
+      "name": "Full JARVIS-DFT",
+      "url": "https://pages.nist.gov/jarvis/databases/",
+      "documentedRecords": 75993,
+      "datasetUrl": "https://figshare.com/articles/dataset/jdft_3d-7-7-2018_json/6815699",
+      "access": "jarvis-tools downloads / Figshare / OPTIMADE; full archive not downloaded",
+      "evidence": "Computed crystalline-material properties; engineering tensile strength and supplier condition are not implied",
+      "licenseStatus": "Figshare version 10 explicitly lists CC BY 4.0; version 11 (2026-05-09) is listed but its license metadata was not successfully retrieved. Reverify selected version before import.",
+      "adapterRequirements": "Potentially enrich existing JARVIS IDs with chemical identity and computed density; preserve per-property provenance and avoid duplicating existing benchmark entries.",
+      "acquisitionStatus": "blocked_network",
+      "importedRecords": 0,
+      "acquisitionResult": "Figshare hosts resolve to a NextDNS block page and fail TLS verification. TLS was not disabled and filtering was not bypassed. Existing 19,335 pinned JARVIS elastic benchmark records remain available."
+    },
+    {
+      "key": "materials-project",
+      "name": "Materials Project",
+      "url": "https://registry.opendata.aws/materials-project/",
+      "access": "Public S3 build bucket listing verified without credentials; MP API requires a free account API key",
+      "observedBucketPrefixes": [
+        "collections/",
+        "current-build/",
+        "images/",
+        "objects/"
+      ],
+      "properties": "Computed crystal structures, density, elastic, electronic, dielectric and other property subsets",
+      "licenseStatus": "AWS registry links MP Terms of Use; terms endpoint returned 403. Do not apply one license to every MP subcollection.",
+      "adapterRequirements": "Select summary/elasticity products, retain calculation IDs/methods, and exclude restricted collections unless separately authorized.",
+      "acquisitionStatus": "imported",
+      "importedRecords": 271325,
+      "acquisitionResult": "Full public summary/elasticity Parquet snapshots downloaded; 154,377 core and 116,948 GNoME non-deprecated records imported under separate licenses. 8,834 deprecated summary records remain in raw files and are excluded from screening."
+    },
+    {
+      "key": "nomad",
+      "name": "NOMAD",
+      "url": "https://nomad-coe.eu/nomad-lab/services-nomad-lab/nomad-nomad-lab",
+      "access": "Public repository/archive and APIs documented; bulk endpoint not probed",
+      "scale": "Millions of FAIR records advertised; not a count of distinct complete engineering grades",
+      "licenseStatus": "Publisher documentation describes published repository/archive data as CC BY 4.0",
+      "adapterRequirements": "Import selected public datasets using their schemas, units and provenance; avoid duplicate calculations from other databases.",
+      "acquisitionStatus": "imported_property_subset",
+      "importedRecords": 120,
+      "acquisitionResult": "Complete public query tagged with bulk_modulus or shear_modulus; published state and CC BY 4.0 checked per entry. The full OPTIMADE archive advertises 18,839,485 records and was not downloaded."
+    },
+    {
+      "key": "alexandria",
+      "name": "Alexandria",
+      "url": "https://alexandria.icams.rub.de/datasets.html",
+      "licenseUrl": "https://alexandria.icams.rub.de/about.html",
+      "access": "Public downloads and OPTIMADE interface; download directory 2025.07.02 verified",
+      "scale": "NIST JARVIS download documentation lists the 3D PBE collection at 5 million data points; not locally counted",
+      "licenseStatus": "CC BY 4.0 explicitly stated by publisher",
+      "properties": "DFT-relaxed inorganic crystal geometries, energies, convex hulls and selected phonon data",
+      "adapterRequirements": "Suitable for crystal-discovery research; do not create tensile or service-temperature values from structure/energy data.",
+      "acquisitionStatus": "downloaded_normalizing",
+      "importedRecords": 0,
+      "acquisitionResult": "All 59 published PBE 3D archives downloaded and SHA-256 recorded. Normalization is in progress; full raw structures retained. Other PBEsol/SCAN/low-dimensional collections are not claimed downloaded."
+    },
+    {
+      "key": "aflow",
+      "name": "AFLOW",
+      "url": "https://www.aflow.org/documentation/",
+      "advertisedRecords": 3929948,
+      "advertisedElasticEntries": 6488,
+      "advertisedThermalEntries": 6503,
+      "access": "REST/AFLUX API documented; no bulk archive downloaded",
+      "licenseStatus": "AFLUX documentation restricts repository data use to scientific, academic and noncommercial purposes",
+      "adapterRequirements": "Select actual AEL/AGL subsets with property-specific units and temperatures; full database count does not imply full property coverage.",
+      "acquisitionStatus": "imported_property_subset",
+      "importedRecords": 5664,
+      "acquisitionResult": "Complete union of available AEL Voigt bulk modulus and AGL 300 K conductivity queries. Source returned 5,639 elastic and 5,653 thermal entries; AUID duplicates combined. Scientific/academic/non-commercial restriction retained."
+    },
+    {
+      "key": "oqmd",
+      "name": "OQMD",
+      "url": "https://www.oqmd.org/download/",
+      "advertisedRecords": 1407395,
+      "downloadVersion": "1.8, February 2026",
+      "archiveSizeGB": 21.1,
+      "access": "Public API without credentials and MySQL dump documented; direct page requests returned 502 during this audit",
+      "licenseStatus": "No current dataset reuse license verified from primary documentation",
+      "properties": "DFT thermodynamic and structural properties; limited relevance to supplier-grade mechanical screening",
+      "adapterRequirements": "Prefer targeted API queries over loading a separate roughly 100 GB MySQL installation.",
+      "acquisitionStatus": "blocked_access_and_capacity",
+      "importedRecords": 0,
+      "acquisitionResult": "Download and formation-energy API requests return HTTP 502. The advertised 21.1 GB compressed SQL dump / roughly 100 GB MySQL installation does not fit this workspace disk capacity."
+    },
+    {
+      "key": "nasa-maptis",
+      "name": "NASA MAPTIS",
+      "url": "https://maptis.nasa.gov/Features",
+      "advertisedSelectionListRecords": 32000,
+      "access": "Registered accounts; current notice says cost-sharing/payment effective January 2026",
+      "licenseStatus": "Access-controlled NASA and commercial collections, including ASM/Granta/MMPDS; not a public open-data download",
+      "acquisitionStatus": "needs_account_or_export",
+      "importedRecords": 0,
+      "acquisitionResult": "No MAPTIS credentials or approved export are present. Registered access/payment is required by publisher."
+    },
+    {
+      "key": "nims-matnavi",
+      "name": "NIMS MatNavi / PoLyInfo / Kinzoku",
+      "url": "https://mits.nims.go.jp/",
+      "access": "Free registered browsing with organization identity; publisher explicitly prohibits mass acquisition/scraping",
+      "licenseStatus": "Free viewing does not authorize bulk import. NIMS MDR is a separate repository requiring dataset-level assessment.",
+      "acquisitionStatus": "needs_approved_bulk_export",
+      "importedRecords": 0,
+      "acquisitionResult": "No licensed bulk export present. Publisher prohibits scraping/mass acquisition from browsing service; no scraping attempted."
+    }
+  ],
+  "commercialSources": {
+    "authorization": "Owner reports teammates obtained authorization; existing authorization record retained.",
+    "availableExports": [],
+    "configuredCredentials": [],
+    "status": "No Granta, Total Materia or MatWeb export or credential supplied; import mappings ready."
+  }
+}

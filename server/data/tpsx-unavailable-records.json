@@ -1,0 +1,22 @@
+{
+  "listedRecords": 1549,
+  "propertyRecords": 1545,
+  "unavailableDetails": [
+    {
+      "id": 1519,
+      "error": "Missing detail page"
+    },
+    {
+      "id": 773,
+      "error": "Missing detail page"
+    },
+    {
+      "id": 1051,
+      "error": "Missing detail page"
+    },
+    {
+      "id": 1258,
+      "error": "Missing detail page"
+    }
+  ]
+}

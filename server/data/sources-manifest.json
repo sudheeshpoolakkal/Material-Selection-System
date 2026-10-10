@@ -1,0 +1,42 @@
+{
+  "files": {
+    "nist-bulk.zip": {
+      "url": "https://raw.githubusercontent.com/usnistgov/jarvis_leaderboard/57afc55f94c8a6f4562f73a3173968cd4b2f83b1/jarvis_leaderboard/benchmarks/AI/SinglePropertyPrediction/dft_3d_bulk_modulus_kv.json.zip",
+      "sha256": "5535abd36e95770708fb59404174a0de1b6ff9245ac5714dcffcc1ff57fb7239"
+    },
+    "nist-shear.zip": {
+      "url": "https://raw.githubusercontent.com/usnistgov/jarvis_leaderboard/57afc55f94c8a6f4562f73a3173968cd4b2f83b1/jarvis_leaderboard/benchmarks/AI/SinglePropertyPrediction/dft_3d_shear_modulus_gv.json.zip",
+      "sha256": "9fffd5990b7d695636194dcfd55b154782e58c7befdcb5713ec1248b4e510d5a"
+    },
+    "mpea.csv": {
+      "url": "https://raw.githubusercontent.com/CitrineInformatics/MPEA_dataset/master/MPEA_dataset.csv",
+      "sha256": "c5504d93fd324d1be26cf814d0694ee9ee95578d68a0b38aba6813b939fa2c5d"
+    }
+  },
+  "sources": [
+    {
+      "key": "nist-jarvis-elastic",
+      "name": "NIST JARVIS-DFT elastic benchmarks",
+      "url": "https://pages.nist.gov/jarvis_leaderboard/AI/SinglePropertyPrediction/dft_3d_bulk_modulus_kv/",
+      "license": "CC BY 4.0",
+      "kind": "computed",
+      "version": "57afc55f94c8a6f4562f73a3173968cd4b2f83b1",
+      "checksum": "f430770fe683568587b6bb3bdaa2d84fa76fe9269195a8446d44429ee0b32885",
+      "note": "NIST-published DFT calculations, not measured supplier-grade properties. Bulk and shear modulus are stiffness measures, not tensile strength. Missing density, prices, conductivity, applications and service limits are left unknown. Non-positive elastic moduli are excluded from selectable properties. Source: Choudhary et al., npj Computational Materials 6, 173 (2020), doi:10.1038/s41524-020-00440-1.",
+      "records": 19335,
+      "normalizedSha256": "788c8e0f721b42a083fef227cdc892fb066b53409187f15a2d4a50c05f66c830"
+    },
+    {
+      "key": "borg-mpea",
+      "name": "Borg et al. experimental MPEA alloys",
+      "url": "https://doi.org/10.1038/s41597-020-00768-9",
+      "license": "Apache-2.0 (source repository)",
+      "kind": "experimental",
+      "version": "Published 2020; GitHub snapshot SHA-256 pinned",
+      "checksum": "c5504d93fd324d1be26cf814d0694ee9ee95578d68a0b38aba6813b939fa2c5d",
+      "note": "Literature-curated experimental alloy test records from Borg et al., Scientific Data 7, 430 (2020). Records are material/condition observations, not distinct commercial grades. Calculated density and modulus are marked computed per property. Compression strengths are never imported as tensile strengths. Test temperature is not a service-temperature rating; processing history is not a compatibility certification.",
+      "records": 1545,
+      "normalizedSha256": "4e6c50c8391ffd256fd8daa06c54fe7fab8413a682ee6ec45aff1459e7720676"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "snapshotDate": "2026-10-10",
+  "source": {
+    "key": "material-registry",
+    "name": "MaterialRegistry engineering references",
+    "url": "https://www.materialregistry.com/docs/api",
+    "kind": "literature-extracted",
+    "version": "Public API snapshot 2026-10-10",
+    "checksum": "ab3ff68b295eab3a5d1e147d496f309744fc30085eab2f8cb03758c6d93e8153",
+    "license": "Publisher describes open data; project use authorized by owner confirmation 2026-10-10",
+    "note": "Registry reference values. The snapshot supplies no underlying property citations or test conditions; values are not identified as measured, typical or specified minima. Grade designations are registry cross-references, not a certification of interchangeability. Melting point is not a service-temperature rating. Elongation gauge length and elastic-modulus method are unspecified."
+  },
+  "records": 702,
+  "pages": [
+    {
+      "file": "page-0.json",
+      "sha256": "e323956edc8c39cc4e30d32c84d73e61fe93a498e4f392ad052e3b37a7809c62",
+      "url": "https://api.materialregistry.com/api/v1/materials?limit=100&offset=0"
+    },
+    {
+      "file": "page-100.json",
+      "sha256": "e18fdd450190fe2f5f496a0af9836da7a3ed8683197b8518445ae8339c849b0b",
+      "url": "https://api.materialregistry.com/api/v1/materials?limit=100&offset=100"
+    },
+    {
+      "file": "page-200.json",
+      "sha256": "72f66733b8269e5d5d2a1a1025dfae1b1aada2fcf34e54247b5200620c7d046a",
+      "url": "https://api.materialregistry.com/api/v1/materials?limit=100&offset=200"
+    },
+    {
+      "file": "page-300.json",
+      "sha256": "d260e197d9d623874f8bfb9974531fa89515f1e0f0f2e6d9e4560952088c8888",
+      "url": "https://api.materialregistry.com/api/v1/materials?limit=100&offset=300"
+    },
+    {
+      "file": "page-400.json",
+      "sha256": "36d9d1a891070690e06b67a377f630d0c3c7ea21c4c393d7628b76193b976a34",
+      "url": "https://api.materialregistry.com/api/v1/materials?limit=100&offset=400"
+    },
+    {
+      "file": "page-500.json",
+      "sha256": "8c770671254c6b5f9eee12e43697bef35d56fd2aa37639cdfef385cc30d35a2b",
+      "url": "https://api.materialregistry.com/api/v1/materials?limit=100&offset=500"
+    },
+    {
+      "file": "page-600.json",
+      "sha256": "e6a5f18f1176239a0c75224113bc57eb9f4a38b79a68ce7bbe46d907cd1ecc0b",
+      "url": "https://api.materialregistry.com/api/v1/materials?limit=100&offset=600"
+    },
+    {
+      "file": "page-700.json",
+      "sha256": "ebc362ca22af15191e0217505e99dd276e0319d8c55544813a91c400dbbf04cd",
+      "url": "https://api.materialregistry.com/api/v1/materials?limit=100&offset=700"
+    }
+  ],
+  "checksumDefinition": "SHA-256 of ordered concatenated page SHA-256 hex digests",
+  "normalizedSha256": "fe9d49277a558125f255602a6b14373a9ee006f4fd3c98a96e855e3be46eacef",
+  "coverage": {
+    "density": 702,
+    "elasticModulus": 141,
+    "electricalConductivityIACS": 1,
+    "elongationUnspecified": 547,
+    "hardnessBrinell": 167,
+    "hardnessRockwellB": 2,
+    "hardnessRockwellC": 58,
+    "hardnessRockwellM": 1,
+    "hardnessRockwellR": 5,
+    "hardnessShore00": 3,
+    "hardnessShoreA": 29,
+    "hardnessVickers": 24,
+    "meltingPoint": 97,
+    "tensileStrength": 599,
+    "thermalConductivity": 26,
+    "yieldStrength": 424
+  },
+  "registryCategories": {
+    "stainless-steel": 74,
+    "carbon-steel": 96,
+    "nickel-alloy": 45,
+    "aluminum": 71,
+    "tool-steel": 95,
+    "copper": 53,
+    "titanium": 28,
+    "cast-iron": 40,
+    "magnesium": 23,
+    "zinc": 22,
+    "plastic": 71,
+    "composite": 29,
+    "ceramic": 26,
+    "rubber": 29
+  },
+  "missingUnderlyingCitations": 2827,
+  "unmappedPropertyCount": 1,
+  "termsStatus": "Terms link returned 404; GitHub link leads to github.com home; no specific open-data license identified. Project use authorized by owner confirmation."
+}
