@@ -1,213 +1,140 @@
-# Material Optimization DBMS
+# Starbase · Material Selection System
 
-A full-stack Database Management System (DBMS) and web application designed for engineering material optimization, constraint specification, and team collaboration.
+An engineering material selection workspace backed by **MySQL**. The running app reads material records, properties, source citations and categories from relational tables. It does not load a hard-coded material list or fall back to SQLite.
 
----
+NASA, Materials Project, AFLOW, NOMAD and Alexandria acquisition status, exact imported scopes, licenses, source failures and repeatable commands are documented in [the acquisition report](docs/data-acquisition-report.md). Source record totals do not imply complete commercial-grade specifications.
 
-## 📌 Project Overview
+The public homepage at `/` introduces Starbase and leads into the workspace at `/materials`. The public pages at `/about` and `/brand` explain the product and provide the Starbase identity, downloadable SVG logos, and a brand kit. The workspace uses top navigation and responsive layouts for exploration, selection, comparison and projects. See [the product redesign record](docs/product-redesign.md) for visual changes, browser validation and the hero asset prompt.
 
-In mechanical, aerospace, and structural engineering, selecting the ideal material requires balancing multiple conflicting objectives—primarily **minimizing weight** while **satisfying target cost boundaries**. 
+## Run locally
 
-This system provides a centralized platform for engineering teams to:
-- Organize optimization projects.
-- Define and track multi-variable material constraints (**Max Weight** and **Target Cost**).
-- Collaborate securely with granular permission levels.
-- Manage user profiles with encrypted authentication.
+Use Node.js 22.13 or newer (tested with Node 24). Configure `server/.env` from `server/.env.example` with your MySQL host, port, database and application credentials.
 
----
-
-## 🛠️ Architecture & Tech Stack
-
-| Layer | Technology | Description |
-| :--- | :--- | :--- |
-| **Frontend** | React 18, React Router v6, Axios | Component-driven SPA with responsive UI, dynamic modals, and client-side routing. |
-| **Backend API** | Node.js, Express 5 | RESTful API with structured routes, controllers, and middleware. |
-| **Database** | MySQL 8.0 | Relational database with foreign key constraints, `ON DELETE CASCADE`, and indexing. |
-| **Security** | JWT, bcrypt (10 rounds) | Token-based stateless authentication and cryptographically salted password hashing. |
-
----
-
-## 🗄️ Database Schema
-
-The database `material_optimization_db` is designed with the following relational model:
-
-```
-+------------------+         +------------------+
-|      Users       |         |     Projects     |
-+------------------+         +------------------+
-| user_id (PK)     |<---+    | project_id (PK)  |<---+
-| name             |    |    | name             |    |
-| email (Unique)   |    |    | owner_id (FK)----+    |
-| password_hash    |    |    | created_at       |    |
-| role (enum)      |    |    +------------------+    |
-| created_at       |    |             |              |
-+------------------+    |             |              |
-        ^               |             |              |
-        |               |             v              |
-+-----------------------+--+ +-----------------------+--+
-|      Collaborators       | |     Material_Specs       |
-+--------------------------+ +--------------------------+
-| project_id (PK, FK) -----+ | spec_id (PK)             |
-| user_id (PK, FK) --------+ | project_id (FK) ---------+
-| permission_level (enum)  | | max_weight (DECIMAL)     |
-+--------------------------+ | target_cost (DECIMAL)    |
-                             | created_at               |
-                             +--------------------------+
+```bash
+npm run setup
+npm run data:download
+npm run data:import
+npm run data:registry
+npm run dev
 ```
 
-### Table Breakdown
-1. **`Users`**: Stores user credentials, hashed passwords, roles (`admin`, `developer`, `viewer`), and display names.
-2. **`Projects`**: Tracks engineering projects owned by a user.
-3. **`Collaborators`**: Associative junction table mapping team members to projects with permissions (`read`, `write`, `admin`).
-4. **`Material_Specs`**: Stores target optimization boundaries (`max_weight` in kg, `target_cost` in USD) linked to projects.
+Create an empty MySQL database before importing:
 
----
-
-## ✅ What Has Been Implemented
-
-### 1. Authentication & Security
-- **Account Registration**: Validates email format, checks for duplicates, enforces minimum 8-character passwords, displays real-time password strength, and hashes passwords using bcrypt (10 salt rounds).
-- **Secure Login**: Issues signed JSON Web Tokens (JWT) valid for 30 days.
-- **Role-Based Profiles**: Assigns user roles (`Viewer`, `Developer`, `Admin`) with distinct access rights.
-- **Route Protection**: Backend middleware (`authMiddleware.js`) verifies JWT Bearer tokens on all private endpoints.
-
-### 2. Account Management
-- **Profile Customization**: Users can update their display name and email address from the `/profile` page with instant feedback and synchronized state.
-- **Password Updates**: Secure password modification requiring current password verification before updating to a new bcrypt-hashed password.
-
-### 3. Interactive Project Management Dashboard
-- **Live Workspace Metrics**: Real-time summary tiles showing:
-  - Total Accessible Projects
-  - Owned Projects
-  - Shared Collaborations
-  - Total Material Constraints Defined
-- **Project Search & Filters**: Client-side filtering by project name, owner, and ownership status (*All*, *My Projects*, *Shared with Me*).
-- **Interactive Project Cards**: Card view displaying owner indicators, spec counts, team size, and quick-action buttons.
-- **Project Creation**: Modal for instantiating projects with optional immediate material specs.
-- **Cascade Deletion**: Owners can permanently delete projects and their associated specs.
-
-### 4. Material Specification Management
-- Dedicated **Specs Modal** per project displaying constraint cards (`Max Weight: X kg` | `Target Cost: $Y`).
-- Dynamic addition and deletion of specifications with input validation for positive numbers.
-
-### 5. Team Collaboration
-- Dedicated **Team Modal** per project.
-- Invite existing registered users by email address.
-- Configurable permission levels:
-  - `Read`: Inspect specs in read-only mode.
-  - `Write`: Add and remove material constraints.
-  - `Admin`: Full management permissions on the project.
-- Ability for project owners to remove collaborators.
-
-### 6. System & Infrastructure Fixes
-- Dual-stack dev server configuration (`HOST=::`) in `client/.env` resolving Windows IPv6 loopback issues (`[::1]` vs `127.0.0.1`).
-- Clean `.gitignore` configuration preventing `node_modules/`, build outputs, and `.env` credentials from leaking into Git.
-- Git commit history sanitized and optimized from 64 MB down to ~860 KB.
-
----
-
-## 🔮 What Needed to Be Implemented (Future Roadmap)
-
-The following features represent recommended future enhancements for production deployment:
-
-### 1. Material Selection & Pareto Optimization Engine
-- **Material Catalog Database**: Add a `Materials` reference table populated with standard engineering materials (e.g., Titanium Ti-6Al-4V, Aluminum 7075-T6, Carbon Fiber Epoxy, Stainless Steel 316) containing mechanical properties (density, yield strength, thermal conductivity, unit cost).
-- **Optimization Algorithm**: An analytical calculation engine that evaluates defined `Material_Specs` constraints against the catalog and ranks candidate materials using Pareto frontier optimization (minimizing weight $\times$ cost).
-
-### 2. Reporting & Data Export
-- **Export to PDF / CSV**: Allow engineers to download comprehensive optimization reports, material data sheets, and project summaries.
-- **Bill of Materials (BOM) Generator**: Generate cost and weight rollups for multi-component assemblies.
-
-### 3. Real-Time Activity & Audit Logs
-- **Project Audit Trail**: Track change logs showing which collaborator added, updated, or removed specific constraints with timestamps.
-- **WebSocket Notifications**: Push real-time notifications to team members when collaborators are added or specs are modified.
-
-### 4. System Administration Console
-- Dedicated `/admin` dashboard for users with the `admin` role to inspect system statistics, manage registered users, and audit workspace health.
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v16 or higher)
-- [MySQL Server](https://dev.mysql.com/downloads/installer/) (v8.0 or higher) running locally on port 3306
-
-### 1. Database Initialization
-Log in to your MySQL terminal or MySQL Workbench and run:
 ```sql
-CREATE DATABASE IF NOT EXISTS material_optimization_db;
-USE material_optimization_db;
+CREATE DATABASE material_optimization_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
-Then execute the initialization script located at [server/database/schema.sql](server/database/schema.sql).
 
-### 2. Backend Setup
-1. Open a terminal in the `server` folder:
-   ```bash
-   cd server
-   ```
-2. Install backend dependencies:
-   ```bash
-   npm install
-   ```
-3. Configure environment variables by creating a `.env` file (refer to `.env.example`):
-   ```properties
-   PORT=5000
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=your_mysql_password
-   DB_NAME=material_optimization_db
-   JWT_SECRET=your_secret_jwt_key
-   ```
-4. Start the server:
-   ```bash
-   node server.js
-   ```
-   *The server will start listening at `http://localhost:5000`.*
+Give a dedicated application user access to that database. Tables and additive schema migrations are created automatically. Material data is imported **only by the explicit import command**, never at application startup. If MySQL is unavailable, startup fails with a clear connection error; no substitute catalog is served.
 
-### 3. Frontend Setup
-1. Open a second terminal in the `client` folder:
-   ```bash
-   cd client
-   ```
-2. Install frontend dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the React development application:
-   ```bash
-   npm start
-   ```
-   *The app will automatically open at `http://localhost:3000`.*
+Open [localhost:3000](http://localhost:3000). The development frontend proxies `/api` to the API on port 5000. Exploration, selection and comparison work without signing in; projects and saved selections require an account.
 
----
+### The local database prepared in this workspace
 
-## 📡 API Reference Summary
+An isolated **MySQL Community Server 8.4.11** is installed under `.runtime/mysql`, with data under `server/database/mysql`. It listens only on `127.0.0.1:3307`. Its generated application credentials are in the ignored `server/.env` file. No system packages or services were changed. Start it in a separate terminal before the app:
 
-### Authentication & User
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Public | Register a new user (`name`, `email`, `password`, `role`) |
-| `POST` | `/api/auth/login` | Public | Authenticate user and return JWT |
-| `GET` | `/api/auth/me` | Private | Get profile data of current user |
-| `PUT` | `/api/auth/profile` | Private | Update user's name and email |
-| `PUT` | `/api/auth/change-password` | Private | Change password with current password verification |
+```bash
+npm run db:start
+```
 
-### Projects & Optimization
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/projects/stats` | Private | Retrieve aggregate project & spec stats |
-| `GET` | `/api/projects` | Private | List all accessible projects |
-| `POST` | `/api/projects` | Private | Create a project with optional initial specs |
-| `GET` | `/api/projects/:id` | Private | Get single project with specs and collaborators |
-| `PUT` | `/api/projects/:id` | Private | Update project name |
-| `DELETE`| `/api/projects/:id` | Private | Delete project (owner only) |
-| `POST` | `/api/projects/:id/specs` | Private | Add material constraint spec |
-| `DELETE`| `/api/projects/:id/specs/:specId` | Private | Delete material constraint spec |
-| `POST` | `/api/projects/:id/collaborators` | Private | Add collaborator by email and permission |
-| `DELETE`| `/api/projects/:id/collaborators/:userId` | Private | Remove collaborator |
+The runtime, credentials, database files and source downloads are excluded from Git. These local files are not included in a fresh clone; use your own MySQL installation there. The original SQLite file and previous `.env` configuration (under `.runtime/original-server.env`) are retained as local archives, and are not used by the app.
 
----
+For a built preview:
 
-## 📄 License
-This project is open-source and available under the [ISC License](LICENSE).
+```bash
+npm run build
+npm start
+```
+
+This serves the frontend and API together on loopback port 3000. `PORT=3100 npm start` selects another port. `STARBASE_HOST` (or the legacy `MATERIA_HOST`) explicitly overrides the bind address. Set a persistent `JWT_SECRET`; production requires it. Do not commit secrets or local database files.
+
+## Downloaded data and evidence
+
+The prepared catalog contains **21,663 source records**: **20,880 research records**, **81 supplier grade/product-form records across 29 stainless-steel grades**, and **702 MaterialRegistry engineering references**. Registry data spans 14 categories, grouped into metals, polymers, composites, ceramics and elastomers. The library starts with 783 engineering records; research records remain in a separate collection. See [expanded data and vendor access status](docs/data-acquisition.md).
+
+| Source | Records | Evidence and available properties |
+| --- | ---: | --- |
+| [NIST JARVIS-DFT elastic benchmarks](https://pages.nist.gov/jarvis_leaderboard/AI/SinglePropertyPrediction/dft_3d_bulk_modulus_kv/) | 19,335 | Computed crystalline-material bulk and shear moduli, in GPa |
+| [Borg et al., Scientific Data 7, 430 (2020)](https://doi.org/10.1038/s41597-020-00768-9) | 1,545 | Literature-curated alloy observations with processing, test type, temperature, density and available mechanical properties |
+| Outokumpu Core / Supra / Forta | 81 | Supplier values with product forms, ranges, property temperatures and source pages |
+| [MaterialRegistry public API](https://www.materialregistry.com/docs/api) | 702 | Grade cross-references; 702 densities, 599 tensile strengths, 424 yield strengths, 141 elastic moduli and 26 thermal conductivities. Test conditions and underlying property citations absent. |
+
+Source files are downloaded from the publishers' official repositories: [NIST](https://github.com/usnistgov/jarvis_leaderboard) and [the alloy dataset authors](https://github.com/CitrineInformatics/MPEA_dataset). NIST data is pinned to a repository revision. All input files are SHA-256 verified, and `server/data/sources-manifest.json` records source URLs, licenses, checksums, versions and imported counts. `server/scripts/prepare-sources.py` downloads and normalizes the sources using Python's standard library. A failed checksum requires inspecting the source update before changing the pinned manifest.
+
+These are **source records, not 20,880 distinct commercial grades**. NIST benchmark exports identify crystals by their original `JVASP` accession; chemical formulas are not supplied by those exports. Experimental records may describe different tests or processing conditions of the same alloy. Computed and experimental data are labeled separately, and calculated density/modulus in experimental records is also labeled per property.
+
+Missing values remain unknown. This import supplies **303 tensile-strength observations**; other alloy records may contain compression tests or only hardness/yield data. Compression strength is never mapped to tensile strength. Test temperature is never mapped to a service-temperature ceiling. Elastic stiffness is not tensile strength. Negative/non-positive NIST moduli are omitted, and records with neither positive modulus are excluded.
+
+Prices, cost tiers, corrosion ratings, thermal conductivity, certified manufacturing compatibility, applications and service limits are not supplied by these two research sources. The additional supplier sources supply mechanical and thermal data with explicit conditions. Requiring unavailable data excludes candidates. Project use of the discussed sources was authorized by the owner on 2026-10-10, recorded in `server/data/source-authorizations.json`. Granta, Total Materia and MatWeb exports can be normalized through the mapped importer; no records from those three providers are included yet because exports or API credentials have not been supplied.
+
+Supplier datasheets are prepared using `npm run data:manufacturers` under the team authorization reported by the project owner. Publisher copyright and applicable agreements remain in force. PDF/table caches are ignored by Git. Preparation requires Python 3 and Poppler's `pdftotext`.
+
+Use `npm run data:registry` to prepare and import the MaterialRegistry snapshot (Python 3 and curl). The API requires no authentication and documents 100 requests/minute per IP; preparation spaces requests and retries transient failures. Use `npm run data:registry:prepare -- --refresh` followed by the bundle importer to fetch an updated snapshot, or `--offline` to verify cached pages. Checksums, pagination completeness, coverage and source limitations are recorded in `server/data/material-registry-manifest.json`. The publisher describes open data, but its Terms link returned 404 and GitHub link pointed to the GitHub homepage during review; no specific open-data license is claimed. This project relies on the owner-confirmed authorization.
+
+Registry melting points are separate from service ceilings; unspecified elongation is separate from A5/A80 and elastic modulus remains method-unspecified. Hardness scales remain separate. One undefined source property is retained in metadata but excluded from screening. International designations are searchable (for example `1.4301`, `SUS304`, `S30400`) and visible in details, comparisons and CSV exports. Records from different sources are kept separate even when grade names overlap.
+
+### Imports and refreshes
+
+```bash
+# Download missing files and verify source checksums
+npm run data:download
+
+# Normalize cached source files without a network request
+python3 server/scripts/prepare-sources.py --offline
+
+# Import into MySQL
+npm run data:import
+
+# Import an additional normalized source bundle
+node server/scripts/import-catalog.js /absolute/path/to/source.json
+```
+
+Each source is imported atomically. Upserts use `(source_id, external_id)` and preserve internal material IDs, so repeated imports do not duplicate records or invalidate saved references. Refreshing a record replaces its property values with the current source values. Records omitted from a later import are retained; source retirement/deletion requires a separate reviewed migration. Existing legacy unsourced entries are retained in the database but excluded from the active catalog. The old 16-material JSON is now used only as an isolated test fixture.
+
+An additional bundle has a `source` object containing `key`, `name`, HTTPS `url`, `license`, `kind` (`experimental`, `computed`, or `literature-extracted`), `version`, `checksum` and `note`, plus a `materials` array. Each material needs `externalId`, `name`, `category`, HTTPS `sourceUrl`, optional `description`, a `properties` object using the keys in `server/services/catalog.js`, and optional `metadata` for conditions and property evidence. Importer validation rejects duplicate IDs and invalid property values.
+
+## Selection and comparison
+
+- The library uses SQL search, source/evidence/family filters, numeric sorting and pages of 24 records. Counts and categories come from MySQL. Exports contain the displayed page and its provenance.
+- Selection screens the full imported catalog against explicit constraints. Required missing properties exclude a candidate. A mass limit requires volume and reported density.
+- Scoring uses min–max bounds over the full catalog, independent of filters. Strength, conductivity and bulk modulus are maximized; density and relative cost are minimized. User priorities are normalized. Missing weighted properties contribute zero and are disclosed; a record with no data for any active priority is excluded.
+- The API shows the top 50 ranked matches and up to 100 exclusion examples, while reporting full match/exclusion counts. Saved projects retain the top 50 with their requirements and explanations.
+- Comparison fetches the selected records directly by database ID, including selections from other pages. It supports four records and CSV export with source citations.
+- No community ratings or fabricated reviews are used for ranking. Scores express preferences, not design certification or probabilities.
+
+The crystalline stiffness scenario sets a bulk-modulus priority and selects computed data. Strength/density charts display only records with both reported properties. Cost/conductivity/corrosion scenarios need an additional source supplying those properties. Component mass is `density (g/cm³) × volume (cm³) / 1000` kg. Final design work requires relevant material conditions, test methods, safety factors and validated grade data.
+
+## Relational model and API
+
+`Users`, `Projects`, `Collaborators`, and `Material_Specs` store accounts and collaboration. `Material`, `Material_Category`, `Property`, `Material_Property`, and `Data_Source` store the catalog. Material metadata retains source record identity, citation and experimental conditions. Application and manufacturing association tables are present for supported future sources. `Project_Requirement`, `Recommendation`, and `Search_History` preserve selections.
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/api/health` | MySQL readiness and catalog coverage |
+| GET | `/api/materials/summary` | Record counts, categories, sources, evidence types and property coverage |
+| GET | `/api/materials?q=&category=&source=&kind=&collection=&property=&sort=&page=&limit=` | Paginated SQL material search; collection and reported-property filters; maximum page size 100 |
+| GET | `/api/materials/:id` | Source-linked material and properties |
+| GET | `/api/materials/categories`, `/api/materials/applications` | Database-derived taxonomy |
+| POST | `/api/materials/recommend` | Constraints and priorities → bounded ranked results |
+| GET / PUT | `/api/projects/:id/selection` | Load / atomically save project requirements and the top 50 recommendations |
+| GET / POST | `/api/projects` | Accessible projects / create project |
+| GET / PUT / DELETE | `/api/projects/:id` | Detail / rename / owner-only delete |
+| POST / DELETE | `/api/projects/:id/specs[/:specId]` | Legacy mass/budget specifications |
+| POST / DELETE | `/api/projects/:id/collaborators[/:userId]` | Owner-managed collaboration |
+| POST | `/api/auth/register`, `/api/auth/login` | Account access |
+| GET | `/api/auth/me` | Validated current account |
+| PUT | `/api/auth/profile`, `/api/auth/change-password` | Account settings |
+
+Read collaborators can inspect saved selections; write/admin collaborators can update them. Only owners manage collaborators and delete projects. Public registration cannot create administrators.
+
+## Validation
+
+```bash
+npm test
+python3 server/tests/ingestion.test.py
+python3 server/tests/source-exports.test.py
+python3 server/tests/registry-sources.test.py
+RUN_MYSQL_TESTS=true node --test server/tests/mysql.integration.test.js
+npm run build
+```
+
+The regular API tests use a disposable in-memory SQLite adapter and synthetic legacy fixtures strictly inside `server/tests`; SQLite is inaccessible as a runtime fallback. The ingestion checks use the downloaded, pinned source snapshots. The opt-in MySQL integration suite checks actual imported counts and coverage, stable IDs on reimport, pagination, parameterized search, evidence labels, missing-data exclusion, computed-stiffness screening and bounded API results. Run it only against this prepared source snapshot; it reimports the NIST bundle without deleting user/project data.

@@ -1,0 +1,50 @@
+{
+  "source": {
+    "key": "matweb-authorized",
+    "name": "MatWeb authorized export",
+    "url": "https://www.matweb.com/reference/terms.aspx",
+    "kind": "literature-extracted",
+    "license": "",
+    "rightsReference": "",
+    "version": "",
+    "note": "Authorized export; original conditions and per-property evidence retained."
+  },
+  "columns": {
+    "externalId": "Record ID",
+    "name": "Material name",
+    "category": "Family",
+    "sourceUrl": "Source URL"
+  },
+  "metadataColumns": {
+    "productForm": "Product form",
+    "standard": "Standard",
+    "processing": "Condition"
+  },
+  "properties": {
+    "density": {
+      "column": "Density",
+      "unit": "kg/m3",
+      "basisColumn": "Density evidence"
+    },
+    "tensileStrength": {
+      "column": "Tensile strength",
+      "unit": "MPa",
+      "basisColumn": "Tensile strength evidence"
+    },
+    "yieldStrength": {
+      "column": "Yield strength",
+      "unit": "MPa",
+      "basisColumn": "Yield strength evidence"
+    },
+    "youngModulus": {
+      "column": "Young modulus",
+      "unit": "GPa",
+      "basisColumn": "Young modulus evidence"
+    },
+    "thermalConductivity": {
+      "column": "Thermal conductivity",
+      "unit": "W/mK",
+      "basisColumn": "Thermal conductivity evidence"
+    }
+  }
+}
