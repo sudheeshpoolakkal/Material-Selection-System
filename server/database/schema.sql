@@ -1,7 +1,7 @@
 -- database/schema.sql
 -- Run this script to initialize the tables for the Material Optimization DBMS
 
-CREATE TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL DEFAULT '',
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -10,7 +10,7 @@ CREATE TABLE Users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE Projects (
+CREATE TABLE IF NOT EXISTS Projects (
     project_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     owner_id INT NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE Projects (
     FOREIGN KEY (owner_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE Collaborators (
+CREATE TABLE IF NOT EXISTS Collaborators (
     project_id INT NOT NULL,
     user_id INT NOT NULL,
     permission_level ENUM('read', 'write', 'admin') DEFAULT 'read',
@@ -28,7 +28,7 @@ CREATE TABLE Collaborators (
     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE Material_Specs (
+CREATE TABLE IF NOT EXISTS Material_Specs (
     spec_id INT AUTO_INCREMENT PRIMARY KEY,
     project_id INT NOT NULL,
     max_weight DECIMAL(10, 2) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE Material_Specs (
     FOREIGN KEY (project_id) REFERENCES Projects(project_id) ON DELETE CASCADE
 );
 
-CREATE TABLE Material_Reviews (
+CREATE TABLE IF NOT EXISTS Material_Reviews (
     review_id INT AUTO_INCREMENT PRIMARY KEY,
     material_id INT NOT NULL,
     user_name VARCHAR(255) NOT NULL,
