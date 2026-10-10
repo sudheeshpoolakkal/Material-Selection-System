@@ -16,32 +16,56 @@ const db = require("./config/db");
 const catalog = require("./services/catalog");
 const app = express();
 app.disable("x-powered-by");
-const clientOrigin = process.env.CLIENT_ORIGIN;
 app.use(
   cors({
-    origin: clientOrigin
-      ? clientOrigin.includes(",")
-        ? clientOrigin.split(",").map((s) => s.trim())
-        : clientOrigin === "*"
-          ? true
-          : clientOrigin
-      : true,
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const raw = (process.env.CLIENT_ORIGIN || "").trim();
+      if (!raw || raw === "*" || raw === "true" || raw === "1") {
+        return callback(null, origin);
+      }
+      const allowed = raw.split(",").map((s) => s.trim().replace(/\/+$/, ""));
+      const clean = origin.replace(/\/+$/, "");
+      if (allowed.includes(clean) || allowed.includes("*")) {
+        return callback(null, origin);
+      }
+      return callback(new Error(`Origin ${origin} not allowed by CORS.`));
+    },
     credentials: true,
   }),
 );
+app.use((req, res, next) => {
+  const original = req.headers["x-matched-path"] || req.headers["x-forwarded-url"] || req.headers["x-invoke-path"];
+  if ((req.url === "/server.js" || req.url === "/api/index.js") && original) {
+    req.url = original;
+  }
+  next();
+});
 app.use(express.json({ limit: "64kb" }));
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/projects/:id/selection", require("./routes/selectionRoutes"));
-app.use("/api/projects", require("./routes/projectRoutes"));
-app.use("/api/materials", require("./routes/materialRoutes"));
-app.get("/api/health", async (req, res) => {
+const authRoutes = require("./routes/authRoutes");
+const selectionRoutes = require("./routes/selectionRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+const materialRoutes = require("./routes/materialRoutes");
+
+app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
+app.use("/api/projects/:id/selection", selectionRoutes);
+app.use("/projects/:id/selection", selectionRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/projects", projectRoutes);
+app.use("/api/materials", materialRoutes);
+app.use("/materials", materialRoutes);
+
+const healthHandler = async (req, res) => {
   try {
     await catalog.ready;
     res.json({ status: "ready", database: db.driver(), catalog: await catalog.getSummary() });
   } catch {
     res.status(503).json({ status: "unavailable" });
   }
-});
+};
+app.get("/api/health", healthHandler);
+app.get("/health", healthHandler);
 app.use("/api", (req, res) =>
   res.status(404).json({ message: "API endpoint not found." }),
 );
