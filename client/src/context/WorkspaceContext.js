@@ -62,7 +62,17 @@ export function WorkspaceProvider({ children }) {
     setError("");
     try {
       const { data } = await axios.get("/api/materials/summary");
-      setCatalogSummary(data);
+      if (data && typeof data === "object" && Array.isArray(data.categories)) {
+        setCatalogSummary({
+          total: Number(data.total) || 0,
+          categories: Array.isArray(data.categories) ? data.categories : [],
+          applications: Array.isArray(data.applications) ? data.applications : [],
+          sources: Array.isArray(data.sources) ? data.sources : [],
+          coverage: Array.isArray(data.coverage) ? data.coverage : [],
+        });
+      } else {
+        throw new Error("Invalid catalog summary format");
+      }
     } catch {
       setCatalogSummary({ total: 0, categories: [], applications: [], sources: [], coverage: [] });
       setError(

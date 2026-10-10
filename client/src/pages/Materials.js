@@ -28,18 +28,21 @@ export default function Materials() {
     [requestError, setRequestError] = useState(""),
     [retry, setRetry] = useState(0);
   const initializedCollection = useRef(false);
+  const categories = Array.isArray(catalogSummary?.categories) ? catalogSummary.categories : [];
+  const sources = Array.isArray(catalogSummary?.sources) ? catalogSummary.sources : [];
+  const coverage = Array.isArray(catalogSummary?.coverage) ? catalogSummary.coverage : [];
   useEffect(() => {
-    if (!initializedCollection.current && catalogSummary.total > 0) {
+    if (!initializedCollection.current && (catalogSummary?.total || 0) > 0) {
       initializedCollection.current = true;
-      if (catalogSummary.sources.some(s => s.dataKind === "literature-extracted")) setCollection("engineering");
+      if (sources.some(s => s.dataKind === "literature-extracted")) setCollection("engineering");
     }
-  }, [catalogSummary]);
-  const families = catalogSummary.categories.map(c => {
+  }, [catalogSummary, sources]);
+  const families = categories.map(c => {
     const count = collection === "engineering" ? Number(c.engineeringCount || 0) : collection === "research" ? Number(c.researchCount ?? c.count) : c.count;
-    return [c.name, c.name === "Metal" ? "Metals & alloys" : c.name === "Crystalline" ? "Crystalline materials" : c.name, `${count.toLocaleString()} source records`, count];
+    return [c.name, c.name === "Metal" ? "Metals & alloys" : c.name === "Crystalline" ? "Crystalline materials" : c.name, `${(count || 0).toLocaleString()} source records`, count || 0];
   }).filter(c => c[3] > 0);
-  const filtered = result.materials;
-  const sourceKind = catalogSummary.sources.find(s => s.sourceKey === source)?.dataKind;
+  const filtered = Array.isArray(result?.materials) ? result.materials : [];
+  const sourceKind = sources.find(s => s.sourceKey === source)?.dataKind;
   const columnKeys = collection === "engineering" || kind === "literature-extracted" || sourceKind === "literature-extracted"
     ? ["density", "tensileStrength", family === "Elastomer" ? "elongationUnspecified" : ["Polymer", "Composite", "Ceramic"].includes(family) ? "elasticModulus" : "yieldStrength"]
     : family === "Metal" || kind === "experimental" || sourceKind === "experimental"
@@ -57,8 +60,20 @@ export default function Materials() {
     setRequestError("");
     const timer = setTimeout(() => {
       axios.get("/api/materials", { params: { q: query, category: family, source, kind, property, collection, sort, page, limit: 24 }, signal: controller.signal })
-        .then(({data}) => setResult(data))
-        .catch(e => { if (!axios.isCancel(e)) { setResult({materials: [], total: 0, pages: 0}); setRequestError("The material catalog is unavailable. Please try again."); } })
+        .then(({data}) => {
+          if (data && Array.isArray(data.materials)) {
+            setResult(data);
+          } else {
+            setResult({ materials: [], total: 0, pages: 0 });
+            setRequestError("The material catalog is unavailable. Please try again.");
+          }
+        })
+        .catch(e => {
+          if (!axios.isCancel(e)) {
+            setResult({ materials: [], total: 0, pages: 0 });
+            setRequestError("The material catalog is unavailable. Please try again.");
+          }
+        })
         .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     }, 200);
     return () => { clearTimeout(timer); controller.abort(); };
@@ -152,7 +167,7 @@ export default function Materials() {
         <div className="catalog-source-filters">
           <label>Data source<select aria-label="Data source" value={source} onChange={e => { setSource(e.target.value); setPage(1); }}>
             <option value="">All sources in this collection</option>
-            {catalogSummary.sources.filter(s => collection === "all" || (collection === "engineering" ? s.dataKind === "literature-extracted" : s.dataKind !== "literature-extracted")).map(s => <option key={s.sourceKey} value={s.sourceKey}>{s.name}</option>)}
+            {sources.filter(s => collection === "all" || (collection === "engineering" ? s.dataKind === "literature-extracted" : s.dataKind !== "literature-extracted")).map(s => <option key={s.sourceKey} value={s.sourceKey}>{s.name}</option>)}
           </select></label>
           <label>Evidence type<select aria-label="Evidence type" value={kind} onChange={e => { setKind(e.target.value); setPage(1); }}>
             <option value="">All evidence types</option>
@@ -161,7 +176,7 @@ export default function Materials() {
           </select></label>
           <label>Reported property<select aria-label="Reported property" value={property} onChange={e => { setProperty(e.target.value); setPage(1); }}>
             <option value="">Any property</option>
-            {catalogSummary.coverage.filter(p => p.count > 0).map(p => <option key={p.propertyKey} value={p.propertyKey}>{p.name}</option>)}
+            {coverage.filter(p => p.count > 0).map(p => <option key={p.propertyKey} value={p.propertyKey}>{p.name}</option>)}
           </select></label>
         </div>
         {family && (

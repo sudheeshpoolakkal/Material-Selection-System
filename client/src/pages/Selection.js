@@ -178,8 +178,7 @@ export default function Selection() {
     [projects, setProjects] = useState([]),
     [chosen, setChosen] = useState("");
   const navigate = useNavigate();
-  const auth = { headers: { Authorization: `Bearer ${token}` } };
-  const apps = catalogSummary.applications;
+  const apps = Array.isArray(catalogSummary?.applications) ? catalogSummary.applications : [];
   useEffect(() => {
     if (!projectId || !token) {
       setProject(null);
@@ -370,7 +369,7 @@ export default function Selection() {
                 onChange={(e) => update("category", e.target.value)}
               >
                 <option value="">All families</option>
-                {catalogSummary.categories.map(c => c.name).map((a) => (
+                {(Array.isArray(catalogSummary?.categories) ? catalogSummary.categories : []).map(c => c.name).map((a) => (
                   <option key={a}>{a}</option>
                 ))}
               </select>

@@ -49,7 +49,7 @@ export default function Guide() {
         <span className="eyebrow">KNOW THE LIMITS OF YOUR DATA</span>
         <h2>A useful starting point. A decision still needs evidence.</h2>
         <p>
-          The catalog contains {catalogSummary.total.toLocaleString()} source records. Supplier grades retain product forms, published strength ranges, physical properties and source pages. Registry references add international grade codes and more material families; their underlying property citations and test conditions are not supplied. Tensile screening uses the lower published limit when a range or minimum is given. Research records retain computed elastic moduli or experimental conditions. Record counts include multiple conditions for the same material. Prices, environmental corrosion performance and service limits require separate supporting data.
+          The catalog contains {(catalogSummary?.total || 0).toLocaleString()} source records. Supplier grades retain product forms, published strength ranges, physical properties and source pages. Registry references add international grade codes and more material families; their underlying property citations and test conditions are not supplied. Tensile screening uses the lower published limit when a range or minimum is given. Research records retain computed elastic moduli or experimental conditions. Record counts include multiple conditions for the same material. Prices, environmental corrosion performance and service limits require separate supporting data.
         </p>
         <p>
           Tensile strength is not a complete load calculation. Corrosion ratings
@@ -57,7 +57,7 @@ export default function Guide() {
           direction and lay-up. Confirm the material grade, condition, supplier,
           and design safety factors before a final selection.
         </p>
-        <div className="source-links">{catalogSummary.sources.map(s => <p key={s.sourceKey}><a href={s.url} target="_blank" rel="noreferrer">{s.name}</a> · {s.count.toLocaleString()} records · {s.dataKind} · {s.license}</p>)}</div>
+        <div className="source-links">{(Array.isArray(catalogSummary?.sources) ? catalogSummary.sources : []).map(s => <p key={s.sourceKey}><a href={s.url} target="_blank" rel="noreferrer">{s.name}</a> · {(s.count || 0).toLocaleString()} records · {s.dataKind} · {s.license}</p>)}</div>
         <Link to="/selection" className="button">
           Open selection studio
           <Icon name="arrow" />
