@@ -16,7 +16,19 @@ const db = require("./config/db");
 const catalog = require("./services/catalog");
 const app = express();
 app.disable("x-powered-by");
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || "http://localhost:3000" }));
+const clientOrigin = process.env.CLIENT_ORIGIN;
+app.use(
+  cors({
+    origin: clientOrigin
+      ? clientOrigin.includes(",")
+        ? clientOrigin.split(",").map((s) => s.trim())
+        : clientOrigin === "*"
+          ? true
+          : clientOrigin
+      : true,
+    credentials: true,
+  }),
+);
 app.use(express.json({ limit: "64kb" }));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/projects/:id/selection", require("./routes/selectionRoutes"));

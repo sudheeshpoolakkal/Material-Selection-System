@@ -13,7 +13,8 @@ if (process.env.NODE_ENV === "test" && process.env.USE_SQLITE === "true") {
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 100,
-    connectTimeout: 5000,
+    connectTimeout: 10000,
+    ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : undefined,
   });
   const ready = pool.getConnection().then((connection) => {
     connection.release();
